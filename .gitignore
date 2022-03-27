@@ -2,3 +2,4 @@
 /.idea/*
 **/build/*
 /build/*
+/src/main/resources/openapi.yaml
