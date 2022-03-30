@@ -18,7 +18,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+//@Builder
 @SequenceGenerator(name = "like_s", sequenceName = "like_s", allocationSize = 1)
 public class LikeUsers {
 

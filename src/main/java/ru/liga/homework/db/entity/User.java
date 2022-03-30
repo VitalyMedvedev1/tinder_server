@@ -1,9 +1,7 @@
 package ru.liga.homework.db.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -11,10 +9,10 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users", schema = "public")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @SequenceGenerator(name = "user_s", sequenceName = "user_s", allocationSize = 1)
 public class User {
 
@@ -44,12 +42,14 @@ public class User {
     @Column(name = "description")
     private String description;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "usersLikely", joinColumns = {@JoinColumn(name = "user1")},
             inverseJoinColumns = {@JoinColumn(name = "User2")})
     private Set<User> likeBy = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name="usersLikely",
             joinColumns={@JoinColumn(name="user2")},
             inverseJoinColumns={@JoinColumn(name="user1")})

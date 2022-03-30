@@ -15,26 +15,25 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/user")
+    @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody UserView userView) {
         userService.create(userView);
     }
 
-    @GetMapping("/user/{username}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @GetMapping("/users/{username}")
     public UserView findUserByName(@PathVariable("username") String userName) {
-        return userService.findUserByName(userName);
+        return userService.findUser(userName);
     }
 
-    @GetMapping("/user/{username1}/like/{username2}")
+    @GetMapping("/users/{username1}/likes/{username2}")
     public void like(@PathVariable("username1") String userNameWhoLike,
                          @PathVariable("username2") String userNameWhoWasLike) {
         userService.like(userNameWhoLike, userNameWhoWasLike);
     }
 
 
-    @GetMapping("/user/{username}/favorite")
+    @GetMapping("/users/{username}/favorite")
     public void findFavorites(@PathVariable("username") String userName) {
         userService.findFavorites(userName);
     }

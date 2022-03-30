@@ -11,6 +11,11 @@ import ru.liga.homework.db.repository.UserRepository;
 import ru.liga.homework.exception.BusinessLogicException;
 import ru.liga.homework.model.User.UserView;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -20,15 +25,9 @@ public class DefaultUserService implements UserService {
     private final ModelMapper modelMapper;
 
     @Override
-    @Transactional(readOnly = true)
-    public UserView findUserByName(String userName) {
-        log.info("Find user with name: {}", userName);
-        User user = userRepository.findByUsername(userName).orElseThrow(
-                () -> {
-                    log.error("User not found with login: {}" + userName);
-                    return new BusinessLogicException("User not found with login: " + userName);
-                });
-        return modelMapper.map(user, UserView.class);
+    @Transactional
+    public UserView findUser(String userName) {
+        return modelMapper.map(findUserByName(userName), UserView.class);
     }
 
     @Override
@@ -40,19 +39,34 @@ public class DefaultUserService implements UserService {
 
     @Override
     @Transactional
-    public void like(String userWhoLikes, String userWhoIsLike) {
-        User user1 = userRepository.findByUsername(userWhoLikes).get();
-        User user2 = userRepository.findByUsername(userWhoIsLike).get();
-
-        //user1.getLikes().add(user2);
+    public void like(String userNameWhoLikes, String userNameWhoIsLike) {
+        if (userNameWhoLikes.equals(userNameWhoIsLike)) {
+            throw new BusinessLogicException("User cant like yourself, name: " + userNameWhoLikes);
+        }
+        User userWhoLikes = findUserByName(userNameWhoLikes);
+        User userWhoIsLike = findUserByName(userNameWhoIsLike);
 
         log.info("Save new record - like, user who like: {}, user who was like: {}", userWhoLikes, userWhoIsLike);
-
+        userWhoLikes.getLikes().add(userWhoIsLike);
     }
 
     @Override
     @Transactional
     public void findFavorites(String userName) {
+        User user = findUserByName(userName);
+        Set<User> usersWhoLikes = user.getLikes();
+        Set<User> usersWhoIsLike = user.getLikeBy();
+        List<User> users = new ArrayList<>(user.getLikes());
+        users.addAll(user.getLikeBy());
+        System.out.println(123);
+    }
 
+    private User findUserByName(String userName) {
+        log.info("Find user with name: {}", userName);
+        return userRepository.findByUsername(userName).orElseThrow(
+                () -> {
+                    log.error("User not found with login: {}" + userName);
+                    return new BusinessLogicException("User not found with login: " + userName);
+                });
     }
 }
