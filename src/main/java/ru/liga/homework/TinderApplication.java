@@ -12,8 +12,4 @@ public class TinderApplication {
         SpringApplication.run(TinderApplication.class, args);
     }
 
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
 }

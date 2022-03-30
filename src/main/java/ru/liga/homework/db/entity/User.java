@@ -6,9 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "user", schema = "public")
+@Table(name = "users", schema = "public")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,15 +29,29 @@ public class User {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "sex")
-    private String sex;
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "gender")
+    private String gender;
 
     @Column(name = "header")
     private String header;
 
-    @Column(name = "find")
-    private String find;
+    @Column(name = "lookingfor")
+    private String lookingFor;
 
     @Column(name = "description")
     private String description;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "usersLikely", joinColumns = {@JoinColumn(name = "user1")},
+            inverseJoinColumns = {@JoinColumn(name = "User2")})
+    private Set<User> likeBy = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name="usersLikely",
+            joinColumns={@JoinColumn(name="user2")},
+            inverseJoinColumns={@JoinColumn(name="user1")})
+    private Set<User> likes = new HashSet<>();
 }
