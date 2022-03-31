@@ -8,18 +8,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users", schema = "public")
+@Table(name = "users", schema = "nfaut1")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SequenceGenerator(name = "user_s", sequenceName = "user_s", allocationSize = 1)
+@SequenceGenerator(name = "users_s", schema = "nfaut1", sequenceName = "users_s", allocationSize = 1)
 public class User {
 
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_s")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_s")
+    private Integer id;
 
     @Column(name = "username")
     private String username;
@@ -44,14 +44,19 @@ public class User {
 
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "usersLikely", joinColumns = {@JoinColumn(name = "user1")},
-            inverseJoinColumns = {@JoinColumn(name = "User2")})
+    @JoinTable(name = "users_like", schema = "nfaut1",
+            joinColumns = {@JoinColumn(name = "user_id_who")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id_that")})
     private Set<User> likeBy = new HashSet<>();
 
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name="usersLikely",
-            joinColumns={@JoinColumn(name="user2")},
-            inverseJoinColumns={@JoinColumn(name="user1")})
+    @JoinTable(name="users_like", schema = "nfaut1",
+            joinColumns={@JoinColumn(name="user_id_that")},
+            inverseJoinColumns={@JoinColumn(name="user_id_who")})
     private Set<User> likes = new HashSet<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id", referencedColumnName = "user_id")
+    private Attach attach;
 }

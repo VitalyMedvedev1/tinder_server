@@ -14,7 +14,6 @@ import ru.liga.homework.model.User.UserView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -27,6 +26,7 @@ public class DefaultUserService implements UserService {
     @Override
     @Transactional
     public UserView findUser(String userName) {
+        User user = findUserByName(userName);
         return modelMapper.map(findUserByName(userName), UserView.class);
     }
 
@@ -65,7 +65,7 @@ public class DefaultUserService implements UserService {
         log.info("Find user with name: {}", userName);
         return userRepository.findByUsername(userName).orElseThrow(
                 () -> {
-                    log.error("User not found with login: {}" + userName);
+                    log.error("User not found with login: " + userName);
                     return new BusinessLogicException("User not found with login: " + userName);
                 });
     }

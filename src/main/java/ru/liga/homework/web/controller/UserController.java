@@ -22,7 +22,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{username}")
-    public UserView findUserByName(@PathVariable("username") String userName) {
+    public UserView findByName(@PathVariable("username") String userName) {
         return userService.findUser(userName);
     }
 
