@@ -8,12 +8,12 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "USER_ATTACH", schema = "nfaut1")
+@Table(name = "USER_ATTACH", schema = "otpmm")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SequenceGenerator(name = "user_attach_s", schema = "nfaut1", sequenceName = "user_attach_s", allocationSize = 1)
+@SequenceGenerator(name = "user_attach_s", schema = "otpmm", sequenceName = "user_attach_s", allocationSize = 1)
 public class Attach {
 
     @Id

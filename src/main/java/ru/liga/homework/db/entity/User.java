@@ -8,12 +8,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users", schema = "nfaut1")
+@Table(name = "users", schema = "otpmm")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SequenceGenerator(name = "users_s", schema = "nfaut1", sequenceName = "users_s", allocationSize = 1)
+@SequenceGenerator(name = "users_s", schema = "otpmm", sequenceName = "users_s", allocationSize = 1)
 public class User {
 
     @Id
@@ -44,14 +44,14 @@ public class User {
 
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "users_like", schema = "nfaut1",
+    @JoinTable(name = "users_like", schema = "otpmm",
             joinColumns = {@JoinColumn(name = "user_id_who")},
             inverseJoinColumns = {@JoinColumn(name = "user_id_that")})
     private Set<User> likeBy = new HashSet<>();
 
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name="users_like", schema = "nfaut1",
+    @JoinTable(name="users_like", schema = "otpmm",
             joinColumns={@JoinColumn(name="user_id_that")},
             inverseJoinColumns={@JoinColumn(name="user_id_who")})
     private Set<User> likes = new HashSet<>();

@@ -23,7 +23,7 @@ public enum LookingFor {
         return Stream.of(LookingFor.values())
                 .filter(targetEnum -> targetEnum.code.equals(code))
                 .findFirst()
-                .orElseThrow(() -> new BusinessLogicException("Field must be: " + Arrays.toString(LookingFor.values())));
+                .orElseThrow(() -> new BusinessLogicException("Field lookingfor must be: " + Arrays.toString(LookingFor.values())));
     }
 
     @JsonValue

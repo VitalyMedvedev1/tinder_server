@@ -32,7 +32,6 @@ public class UserController {
         userService.like(userNameWhoLike, userNameWhoWasLike);
     }
 
-
     @GetMapping("/users/{username}/favorite")
     public void findFavorites(@PathVariable("username") String userName) {
         userService.findFavorites(userName);

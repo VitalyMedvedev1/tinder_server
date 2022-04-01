@@ -35,6 +35,7 @@ public class DefaultUserService implements UserService {
     public void create(UserView userView) {
         log.info("Save user with name: {}", userView.getUsername());
         userRepository.save(modelMapper.map(userView, User.class));
+//        ---------
     }
 
     @Override
