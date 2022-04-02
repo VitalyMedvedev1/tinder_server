@@ -95,10 +95,10 @@ public class DefaultUserService implements UserService {
     public List<UserView> findUsersWithPageable(String userName, int limit, int offset) {
         User user = findUserByName(userName);
         PageRequest pageable = PageRequest.of(limit, offset);
-/*
-        String lookingFor = user.getLookingFor().equals("MALES") ? "MALE" :
-                user.getLookingFor().equals("FEMALES") ? "FEMALE" : "IS NOT NULL";*/
 
-        return userRepository.findUsers(userName, pageable).stream().map(user1 -> modelMapper.map(user1, UserView.class)).collect(Collectors.toList());
+        String lookingFor = user.getLookingFor().equals("MALES") ? "MALE" :
+                user.getLookingFor().equals("FEMALES") ? "FEMALE" : "IS NOT NULL";
+
+        return userRepository.findUsers(userName, lookingFor,  pageable).stream().map(user1 -> modelMapper.map(user1, UserView.class)).collect(Collectors.toList());
     }
 }

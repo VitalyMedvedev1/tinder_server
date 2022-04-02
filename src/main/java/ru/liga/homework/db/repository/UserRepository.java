@@ -17,7 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findUsers(@Param("USERNAME") String userName, @Param("LOOKINGFOR") String lookingFor, PageRequest pageable);*/
 //ORDER BY ?#{#pageable}
 
-    @Query(value = "select * from otpmm.users where username = ?1", nativeQuery = true)
-    List<User> findUsers(@Param("username") String userName, PageRequest pageable);
-
+    @Query(value = "select * from otpmm.users where username != ?1 and gender = ?2", nativeQuery = true)
+        List<User> findUsers(@Param("username") String userName, @Param("gender") String gender, PageRequest pageable);
 }

@@ -50,8 +50,5 @@ class DefaultUsersFormServiceTest {
         boolean delete = file.delete();
 
         assertTrue(delete);
-
     }
-
-
 }
