@@ -1,11 +1,13 @@
 package ru.liga.homework.api;
 
-import ru.liga.homework.model.User.UserView;
-
 import java.awt.image.BufferedImage;
 
 public interface UsersFormService {
-    void createUserForm(UserView userView);
+    String createUserForm(Integer userId, String header, String description);
 
-    String saveUserFormOnDiscAndReturnAbsPath(BufferedImage image, Long userId);
+    String saveUserFormOnDiscAndReturnPath(BufferedImage image, Integer userId);
+
+    void saveFileNameInDb(String fileName, Integer userId);
+
+    String getUserFormInBase64Format(Integer userId);
 }

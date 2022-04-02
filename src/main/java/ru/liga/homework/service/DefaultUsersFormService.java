@@ -1,11 +1,14 @@
 package ru.liga.homework.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import ru.liga.homework.api.UsersFormService;
+import ru.liga.homework.db.entity.Attach;
+import ru.liga.homework.db.repository.AttachRepository;
 import ru.liga.homework.exception.BusinessLogicException;
-import ru.liga.homework.model.User.UserView;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -20,28 +23,32 @@ import java.io.InputStream;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class DefaultUsersFormService implements UsersFormService {
+
+    private final AttachRepository attachRepository;
 
     private static final String BACKGROUND_FILE_NAME = "background.jpg";
     private static final String FONT_NAME = "Old Standard TT";
-    private static final int FONT_SIZE = 98;
+    private static final int FONT_SIZE = 64;
     private static final int FONT_HEADER_SIZE = 10;
     private static final int LEFT_INDENT = 15;
-    private static final String FILE_EXT = "png";
-    private static final String FILE_PATH_NAME = "/forms/form.";
+    private static final String FILE_EXT = "jpg";
+    private static final String FILE_DIR = "/forms/";
     private static final String USER_DIR = System.getProperty("user.dir");
 
     @Override
-    public void createUserForm(UserView userView) {
-        log.debug("Start create form for user {}", userView.getId());
+    public String createUserForm(Integer userId, String header, String description) {
+        log.debug("Start create form for user {}", userId);
         try (InputStream inputStream = new ClassPathResource(BACKGROUND_FILE_NAME).getInputStream()) {
             BufferedImage image = ImageIO.read(inputStream);
-            String header = userView.getHeader() + ",";
-            String description = userView.getDescription();
+            header = header + ",";
             Rectangle rectangle = new Rectangle(image.getWidth(), image.getHeight());
             List<TextLayout> testLines = new ArrayList<>();
             List<TextLayout> headerLines = new ArrayList<>();
@@ -58,7 +65,11 @@ public class DefaultUsersFormService implements UsersFormService {
                 Font descFont = new Font(FONT_NAME, Font.PLAIN, fontSize);
 
                 headerHeight = calcTextHeightAndTextLine(header, headerLines, headerFont, g2, rectangle);
-                descHeight = calcTextHeightAndTextLine(description, testLines, descFont, g2, rectangle);
+                if (description.equals("")) {
+                    descHeight = 0;
+                } else {
+                    descHeight = calcTextHeightAndTextLine(description, testLines, descFont, g2, rectangle);
+                }
                 fontSize -= 2;
             }
             while (descHeight > rectangle.getHeight() - headerHeight);
@@ -74,24 +85,12 @@ public class DefaultUsersFormService implements UsersFormService {
                 y += line.getAscent() + line.getDescent() + line.getLeading();
             }
 
-            saveUserFormOnDiscAndReturnAbsPath(image, userView.getId());
+            String pathForm = saveUserFormOnDiscAndReturnPath(image, userId);
             image.flush();
+            return pathForm;
         } catch (IOException e) {
-            log.error("Error when create form for user {} \n {}", userView.getId(), e.getMessage());
-            throw new BusinessLogicException("Error when create form for user " + userView.getId() + "\n" + e.getMessage());
-        }
-    }
-
-    @Override
-    public String saveUserFormOnDiscAndReturnAbsPath(BufferedImage image, Long userId) {
-        try {
-            log.debug("Save form on disc for user {}", userId);
-            File file = new File(USER_DIR + FILE_PATH_NAME + FILE_EXT);
-            ImageIO.write(image, FILE_EXT, new File(USER_DIR + FILE_PATH_NAME + userId + FILE_EXT));
-            return file.getAbsolutePath();
-        } catch (IOException e) {
-            log.error("Error when save form for user {} \n {}", userId, e.getMessage());
-            throw new BusinessLogicException("Error when save form for user " + userId + "\n" + e.getMessage());
+            log.error("Error when create form for user {} \n {}", userId, e.getMessage());
+            throw new BusinessLogicException("Error when create form for user " + userId + "\n" + e.getMessage());
         }
     }
 
@@ -111,5 +110,42 @@ public class DefaultUsersFormService implements UsersFormService {
         }
         log.debug("Text Height: {}", textHeight);
         return textHeight;
+    }
+
+    @Override
+    public String saveUserFormOnDiscAndReturnPath(BufferedImage image, Integer userId) {
+        try {
+            log.debug("Save form on disc for user {}", userId);
+            File file = new File(USER_DIR + FILE_DIR + new Date().getTime() + "." + FILE_EXT);
+            ImageIO.write(image, FILE_EXT, file);
+            return file.getName();
+        } catch (IOException e) {
+            log.error("Error when save form for user {} \n {}", userId, e.getMessage());
+            throw new BusinessLogicException("Error when save form for user " + userId + "\n" + e.getMessage());
+        }
+    }
+
+    @Override
+    public void saveFileNameInDb(String fileName, Integer userId) {
+        attachRepository.save(new Attach(null, userId, fileName, ""));
+    }
+
+    @Override
+    public String getUserFormInBase64Format(Integer userId) {
+        log.debug("Get form and Base64 encode for user: {}", userId);
+        Attach attach = attachRepository.findByUserId(userId).orElseThrow(
+                () -> {
+                    log.error("Attach not found by userId: {}", userId);
+                    throw new BusinessLogicException("Attach not found by userId: " + userId);
+                });
+
+        byte[] fileContent;
+        try {
+            fileContent = FileUtils.readFileToByteArray(new File(USER_DIR + FILE_DIR + attach.getFileName()));
+        } catch (IOException e) {
+            log.error("Error when get user form from path: {} {} {}", USER_DIR, FILE_DIR, attach.getFileName());
+            throw new BusinessLogicException("Error when get user form from path: " + e.getMessage());
+        }
+        return Base64.getEncoder().encodeToString(fileContent);
     }
 }

@@ -17,8 +17,8 @@ public class UserController {
 
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody UserView userView) {
-        userService.create(userView);
+    public UserView create(@RequestBody UserView userView) {
+        return userService.create(userView);
     }
 
     @GetMapping("/users/{username}")
@@ -35,5 +35,12 @@ public class UserController {
     @GetMapping("/users/{username}/favorite")
     public void findFavorites(@PathVariable("username") String userName) {
         userService.findFavorites(userName);
+    }
+
+    @GetMapping("/users/{username}/favorite")
+    public void findAllUser(@RequestParam(value = "username") String userName,
+                            @RequestParam(value = "limit") int limit,
+                            @RequestParam(value = "offset") int offset) {
+        userService.findUsersWithPageable(userName, limit, offset);
     }
 }

@@ -3,6 +3,7 @@ package ru.liga.homework.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.liga.homework.db.entity.Attach;
 import ru.liga.homework.type.Gender;
 import ru.liga.homework.type.LookingFor;
 
@@ -14,7 +15,7 @@ import javax.persistence.Enumerated;
 @AllArgsConstructor
 public class UserView {
 
-    private Long id;
+    private Integer id;
     private String username;
     private String name;
     private String password;
@@ -27,4 +28,6 @@ public class UserView {
     @Enumerated(EnumType.STRING)
     private LookingFor lookingFor;
     private String description;
+
+    private String attachBase64Code;
 }

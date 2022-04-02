@@ -18,14 +18,14 @@ public class Attach {
 
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_s")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_attach_s")
     private Integer id;
 
     @Column(name = "user_id")
-    private String userId;
+    private Integer userId;
 
-    @Column(name = "file_path")
-    private String filePath;
+    @Column(name = "file_name")
+    private String fileName;
 
     @Column(name = "description")
     private String description;
