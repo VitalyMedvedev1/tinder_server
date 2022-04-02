@@ -28,6 +28,6 @@ public class UserView {
     @Enumerated(EnumType.STRING)
     private LookingFor lookingFor;
     private String description;
-
+    private Attach attach;
     private String attachBase64Code;
 }

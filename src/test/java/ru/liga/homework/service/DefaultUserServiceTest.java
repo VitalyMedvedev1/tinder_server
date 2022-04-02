@@ -19,10 +19,10 @@ class DefaultUserServiceTest {
 
     @Test
     void findUsersWithPageable() {
-        List<UserView> listU1 = userService.findUsersWithPageable("USER1", 0, 1);
-        List<UserView> listU2 = userService.findUsersWithPageable("USER1", 1, 1);
-        List<UserView> listU3 = userService.findUsersWithPageable("USER1", 2, 1);
-        List<UserView> listU4 = userService.findUsersWithPageable("USER1", 3, 1);
+        UserView user1 = userService.findUsersWithPageable("USER2", 0, 1);
+        UserView user2 = userService.findUsersWithPageable("USER2", 1, 1);
+        UserView user3 = userService.findUsersWithPageable("USER1", 2, 1);
+        UserView user4 = userService.findUsersWithPageable("USER1", 3, 1);
         System.out.println(123);
     }
 }

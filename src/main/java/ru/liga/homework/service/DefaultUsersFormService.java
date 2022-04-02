@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.liga.homework.api.UsersFormService;
 import ru.liga.homework.db.entity.Attach;
 import ru.liga.homework.db.repository.AttachRepository;
@@ -30,6 +31,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class DefaultUsersFormService implements UsersFormService {
 
     private final AttachRepository attachRepository;

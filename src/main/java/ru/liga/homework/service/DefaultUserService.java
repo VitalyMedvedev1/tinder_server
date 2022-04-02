@@ -92,13 +92,16 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public List<UserView> findUsersWithPageable(String userName, int limit, int offset) {
+    public UserView findUsersWithPageable(String userName, int limit, int offset) {
         User user = findUserByName(userName);
         PageRequest pageable = PageRequest.of(limit, offset);
-
-        String lookingFor = user.getLookingFor().equals("MALES") ? "MALE" :
-                user.getLookingFor().equals("FEMALES") ? "FEMALE" : "IS NOT NULL";
-
-        return userRepository.findUsers(userName, lookingFor,  pageable).stream().map(user1 -> modelMapper.map(user1, UserView.class)).collect(Collectors.toList());
+        return userRepository.findUsers(user.getId(), pageable).stream()
+                .map(user1 -> modelMapper.map(user1, UserView.class))
+                .peek(userView1 -> userView1.setAttachBase64Code(usersFormService.getUserFormInBase64Format(userView1.getId())))
+                .findFirst().orElseThrow(
+                        () -> {
+                            log.error("Error when find next user for like");
+                            throw new BusinessLogicException("Больше анкет подходящих вам нет");
+                        });
     }
 }
