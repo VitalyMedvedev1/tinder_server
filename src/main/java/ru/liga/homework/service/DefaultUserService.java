@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.liga.homework.api.UserService;
@@ -14,11 +13,10 @@ import ru.liga.homework.db.repository.UserRepository;
 import ru.liga.homework.exception.BusinessLogicException;
 import ru.liga.homework.model.User.UserView;
 
-import java.awt.print.Pageable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -95,7 +93,11 @@ public class DefaultUserService implements UserService {
     public UserView findUsersWithPageable(String userName, int limit, int offset) {
         User user = findUserByName(userName);
         PageRequest pageable = PageRequest.of(limit, offset);
-        return userRepository.findUsers(user.getId(), pageable).stream()
+        List<String> genders = new ArrayList<>();
+        List<String> lookingFor = new ArrayList<>();
+        addSearchCriteria(user, genders, lookingFor);
+
+        return userRepository.findUsers(user.getId(), genders, lookingFor, pageable).stream()
                 .map(user1 -> modelMapper.map(user1, UserView.class))
                 .peek(userView1 -> userView1.setAttachBase64Code(usersFormService.getUserFormInBase64Format(userView1.getId())))
                 .findFirst().orElseThrow(
@@ -103,5 +105,25 @@ public class DefaultUserService implements UserService {
                             log.error("Error when find next user for like");
                             throw new BusinessLogicException("Больше анкет подходящих вам нет");
                         });
+    }
+
+    public void addSearchCriteria(User user, List<String> genders, List<String> lookingFor){
+        switch (user.getLookingFor()) {
+            case "MALES":
+                genders.add("MALE");
+                break;
+            case "FEMALES":
+                genders.add("FEMALE");
+            default:
+                genders.add("MALE");
+                genders.add("FEMALE");
+                break;
+        }
+        if ("MALE".equals(user.getGender())) {
+            lookingFor.add("MALE");
+        } else {
+            lookingFor.add("FEMALE");
+        }
+        lookingFor.add("ALL");
     }
 }
