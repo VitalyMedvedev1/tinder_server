@@ -9,6 +9,6 @@
     <include id="2" file="classpath:db/changelog/migration/schema/002__CREATE_TABLE_USER_ATTACH.sql" author="vemedvedev"/>
     <include id="3" file="classpath:db/changelog/migration/schema/003__CREATE_TABLE_USERS_LIKE.sql" author="vemedvedev"/>
 
-    <include id="999" file="classpath:db/changelog/db.changelog-data.xml" author="vemedvedev"/>
+<!--    <include id="999" file="classpath:db/changelog/db.changelog-data.xml" author="vemedvedev"/>-->
 
 </databaseChangeLog>

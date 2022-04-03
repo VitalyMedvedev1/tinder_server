@@ -5,7 +5,7 @@ import ru.liga.homework.model.User.UserView;
 import java.util.List;
 
 public interface UserService {
-    UserView findUser(String userName);
+    UserView find(String userName);
 
     UserView create(UserView userView);
 

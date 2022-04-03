@@ -23,7 +23,7 @@ public class UserController {
 
     @GetMapping("/users/{username}")
     public UserView findByName(@PathVariable("username") String userName) {
-        return userService.findUser(userName);
+        return userService.find(userName);
     }
 
     @GetMapping("/users/{username1}/likes/{username2}")

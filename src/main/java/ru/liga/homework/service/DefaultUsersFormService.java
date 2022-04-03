@@ -16,7 +16,6 @@ import java.awt.*;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +27,11 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Накладывание текста на картинку(фон). Берем 2 поля с клиента: header и Description, берем прямоугольник в качесве основы с размерами картинки.
+ * По циклу берем шрифт 64, делем на ликии по размеру прямоуголдьника и вычисляем высоту, если больше чем размер прямоугольника, уменьшаем шрифт.
+ * Если текст подошел по размеру, вприсываем на картинку.
+ * **/
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -82,14 +86,12 @@ public class DefaultUsersFormService implements UsersFormService {
 
             for (TextLayout line : testLines
             ) {
-                Rectangle2D bounds = line.getBounds();
                 line.draw(g2, (float) LEFT_INDENT, y + line.getAscent());
                 y += line.getAscent() + line.getDescent() + line.getLeading();
             }
-
-            String pathForm = saveUserFormOnDiscAndReturnPath(image, userId);
+            String fileName = saveUserFormOnDiscAndReturnPath(image, userId);
             image.flush();
-            return pathForm;
+            return fileName;
         } catch (IOException e) {
             log.error("Error when create form for user {} \n {}", userId, e.getMessage());
             throw new BusinessLogicException("Error when create form for user " + userId + "\n" + e.getMessage());
@@ -102,14 +104,11 @@ public class DefaultUsersFormService implements UsersFormService {
         attributedString.addAttribute(TextAttribute.FONT, font);
         AttributedCharacterIterator iterator = attributedString.getIterator();
         LineBreakMeasurer measurer = new LineBreakMeasurer(iterator, graphics2D.getFontRenderContext());
-        float textHeight = 0;
+        float textHeight;
         while (measurer.getPosition() < text.length()) {
             textLines.add(measurer.nextLayout(rectangle.width - LEFT_INDENT));
         }
-        for (TextLayout line : textLines
-        ) {
-            textHeight += line.getAscent() + line.getDescent() + line.getLeading();
-        }
+        textHeight =  textLines.stream().mapToInt(t -> (int) (t.getAscent() + t.getDescent() + t.getLeading())).sum();
         log.debug("Text Height: {}", textHeight);
         return textHeight;
     }

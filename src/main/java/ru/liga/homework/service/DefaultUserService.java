@@ -14,13 +14,13 @@ import ru.liga.homework.exception.BusinessLogicException;
 import ru.liga.homework.model.User.UserView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class DefaultUserService implements UserService {
 
     private final UserRepository userRepository;
@@ -28,36 +28,28 @@ public class DefaultUserService implements UserService {
     private final UsersFormService usersFormService;
 
     @Override
-    @Transactional
-    public UserView findUser(String userName) {
-        User user = findUserByName(userName);
-        return modelMapper.map(findUserByName(userName), UserView.class);
+    public UserView find(String userName) {
+        UserView userView = modelMapper.map(findUserByName(userName), UserView.class);
+        if (userView.getAttach() == null) {
+            createUserForm(userView);
+        }
+        createBase64CodeFromUserForm(userView);
+        return userView;
     }
 
     @Override
-    @Transactional
     public UserView create(UserView userView) {
         log.info("Save user with name: {}", userView.getName());
         User user = userRepository.save(modelMapper.map(userView, User.class));
         userView.setId(user.getId());
 
-        log.info("Create form for user with name: {} id: {}", userView.getName(), user.getId());
-        String fileName = usersFormService.createUserForm(user.getId(), user.getHeader(), user.getDescription());
-
-        log.info("Save form for user with formName: {} userId: {}", userView.getName(), user.getId());
-        usersFormService.saveFileNameInDb(fileName, user.getId());
-
-        log.info("Code attach in Base64");
-        String formBase64 = usersFormService.getUserFormInBase64Format(user.getId());
-
-        log.info("Return UserView");
-        userView.setAttachBase64Code(formBase64);
+        createUserForm(userView);
+        createBase64CodeFromUserForm(userView);
 
         return userView;
     }
 
     @Override
-    @Transactional
     public void like(String userNameWhoLikes, String userNameWhoIsLike) {
         if (userNameWhoLikes.equals(userNameWhoIsLike)) {
             throw new BusinessLogicException("User cant like yourself, name: " + userNameWhoLikes);
@@ -70,7 +62,6 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    @Transactional
     public void findFavorites(String userName) {
         User user = findUserByName(userName);
         Set<User> usersWhoLikes = user.getLikes();
@@ -103,11 +94,27 @@ public class DefaultUserService implements UserService {
                 .findFirst().orElseThrow(
                         () -> {
                             log.error("Error when find next user for like");
-                            throw new BusinessLogicException("Больше анкет подходящих вам нет");
+                            throw new BusinessLogicException("Больше нет анкет подходящих вам");
                         });
     }
 
-    public void addSearchCriteria(User user, List<String> genders, List<String> lookingFor){
+    private void createUserForm(UserView userView) {
+        log.info("Create form for user with name: {} id: {}", userView.getName(), userView.getId());
+        String fileName = usersFormService.createUserForm(userView.getId(), userView.getHeader(), userView.getDescription());
+
+        log.info("Save form for user with formName: {} userId: {}", userView.getName(), userView.getId());
+        usersFormService.saveFileNameInDb(fileName, userView.getId());
+    }
+
+    private void createBase64CodeFromUserForm(UserView userView) {
+        log.info("Code attach in Base64");
+        String formBase64 = usersFormService.getUserFormInBase64Format(userView.getId());
+
+        log.info("Save attach in base64 UserView");
+        userView.setAttachBase64Code(formBase64);
+    }
+
+    public void addSearchCriteria(User user, List<String> genders, List<String> lookingFor) {
         switch (user.getLookingFor()) {
             case "MALES":
                 genders.add("MALE");
