@@ -132,19 +132,12 @@ public class DefaultUsersFormService implements UsersFormService {
     }
 
     @Override
-    public String getUserFormInBase64Format(Integer userId) {
-        log.debug("Get form and Base64 encode for user: {}", userId);
-        Attach attach = attachRepository.findByUserId(userId).orElseThrow(
-                () -> {
-                    log.error("Attach not found by userId: {}", userId);
-                    throw new BusinessLogicException("Attach not found by userId: " + userId);
-                });
-
+    public String getUserFormInBase64Format(String fileName) {
         byte[] fileContent;
         try {
-            fileContent = FileUtils.readFileToByteArray(new File(USER_DIR + FILE_DIR + attach.getFileName()));
+            fileContent = FileUtils.readFileToByteArray(new File(USER_DIR + FILE_DIR + fileName));
         } catch (IOException e) {
-            log.error("Error when get user form from path: {} {} {}", USER_DIR, FILE_DIR, attach.getFileName());
+            log.error("Error when get user form from path: {} {} {}", USER_DIR, FILE_DIR, fileName);
             throw new BusinessLogicException("Error when get user form from path: " + e.getMessage());
         }
         return Base64.getEncoder().encodeToString(fileContent);

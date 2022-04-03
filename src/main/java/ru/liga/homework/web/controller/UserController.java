@@ -37,10 +37,10 @@ public class UserController {
         userService.findFavorites(userName);
     }
 
-/*    @GetMapping("/users/{username}/favorite")
-    public void findAllUser(@RequestParam(value = "username") String userName,
-                            @RequestParam(value = "limit") int limit,
-                            @RequestParam(value = "offset") int offset) {
-        userService.findUsersWithPageable(userName, limit, offset);
-    }*/
+    @GetMapping("/users")
+    public UserView findUsersWithPageable(@RequestParam(value = "username") String userName,
+                            @RequestParam(value = "offset") int offset,
+                            @RequestParam(value = "size") int size) {
+        return userService.findUsersWithPageable(userName, offset, size);
+    }
 }

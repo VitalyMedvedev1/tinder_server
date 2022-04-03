@@ -16,8 +16,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
                             "U.* " +
                             "FROM OTPMM.USERS U " +
                             "WHERE U.ID != ?1 AND " +
-                            "U.ID IN (SELECT UL.USER_ID_THAT FROM OTPMM.USERS_LIKE UL WHERE UL.USER_ID_WHO != ?1) AND " +
+                            "U.ID NOT IN (SELECT UL.USER_ID_THAT FROM OTPMM.USERS_LIKE UL WHERE UL.USER_ID_WHO = ?1) AND " +
                             "(GENDER IN ?2) AND " +
                             "(LOOKINGFOR in ?3)", nativeQuery = true)
     List<User> findUsers(@Param("userid") Integer userId, List<String> genders, List<String> lookingfor,  PageRequest pageable);
 }
+
+//    LEFT JOIN OTPMM.USER_ATTACH ATT ON U.ID = ATT.USER_ID

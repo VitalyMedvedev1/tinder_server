@@ -9,5 +9,5 @@ public interface UsersFormService {
 
     void saveFileNameInDb(String fileName, Integer userId);
 
-    String getUserFormInBase64Format(Integer userId);
+    String getUserFormInBase64Format(String fileName);
 }

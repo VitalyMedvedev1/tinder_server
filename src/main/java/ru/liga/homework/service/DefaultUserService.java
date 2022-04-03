@@ -8,13 +8,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.liga.homework.api.UserService;
 import ru.liga.homework.api.UsersFormService;
+import ru.liga.homework.db.entity.Attach;
 import ru.liga.homework.db.entity.User;
+import ru.liga.homework.db.repository.AttachRepository;
 import ru.liga.homework.db.repository.UserRepository;
 import ru.liga.homework.exception.BusinessLogicException;
+import ru.liga.homework.mapper.UserMapper;
 import ru.liga.homework.model.User.UserView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -24,14 +28,18 @@ import java.util.Set;
 public class DefaultUserService implements UserService {
 
     private final UserRepository userRepository;
+    private final AttachRepository attachRepository;
     private final ModelMapper modelMapper;
+    private final UserMapper userMapper;
     private final UsersFormService usersFormService;
 
     @Override
     public UserView find(String userName) {
-        UserView userView = modelMapper.map(findUserByName(userName), UserView.class);
-        if (userView.getAttach() == null) {
-            createUserForm(userView);
+        UserView userView = userMapper.map(findUserByName(userName));
+        Optional<Attach> attach = attachRepository.findByUserId(userView.getId());
+        String fileName;
+        if (attach.isEmpty()) {
+            fileName = createUserForm(userView);
         }
         createBase64CodeFromUserForm(userView);
         return userView;
@@ -44,7 +52,7 @@ public class DefaultUserService implements UserService {
         userView.setId(user.getId());
 
         createUserForm(userView);
-        createBase64CodeFromUserForm(userView);
+        createBase64CodeFromUserForm(userView, userView.getAttach().getFileName());
 
         return userView;
     }
@@ -81,16 +89,21 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public UserView findUsersWithPageable(String userName, int limit, int offset) {
+    public UserView findUsersWithPageable(String userName, int offset, int size) {
         User user = findUserByName(userName);
-        PageRequest pageable = PageRequest.of(limit, offset);
+        PageRequest pageable = PageRequest.of(offset, size);
         List<String> genders = new ArrayList<>();
         List<String> lookingFor = new ArrayList<>();
         addSearchCriteria(user, genders, lookingFor);
 
         return userRepository.findUsers(user.getId(), genders, lookingFor, pageable).stream()
                 .map(user1 -> modelMapper.map(user1, UserView.class))
-                .peek(userView1 -> userView1.setAttachBase64Code(usersFormService.getUserFormInBase64Format(userView1.getId())))
+                .peek(userView1 -> {
+                    if (userView1.getAttach() == null) {
+                        createUserForm(userView1);
+                    }
+                    createBase64CodeFromUserForm(userView1);
+                })
                 .findFirst().orElseThrow(
                         () -> {
                             log.error("Error when find next user for like");
@@ -98,17 +111,18 @@ public class DefaultUserService implements UserService {
                         });
     }
 
-    private void createUserForm(UserView userView) {
+    private String createUserForm(UserView userView) {
         log.info("Create form for user with name: {} id: {}", userView.getName(), userView.getId());
         String fileName = usersFormService.createUserForm(userView.getId(), userView.getHeader(), userView.getDescription());
 
         log.info("Save form for user with formName: {} userId: {}", userView.getName(), userView.getId());
         usersFormService.saveFileNameInDb(fileName, userView.getId());
+        return fileName;
     }
 
-    private void createBase64CodeFromUserForm(UserView userView) {
+    private void createBase64CodeFromUserForm(UserView userView, String fileName) {
         log.info("Code attach in Base64");
-        String formBase64 = usersFormService.getUserFormInBase64Format(userView.getId());
+        String formBase64 = usersFormService.getUserFormInBase64Format(fileName);
 
         log.info("Save attach in base64 UserView");
         userView.setAttachBase64Code(formBase64);

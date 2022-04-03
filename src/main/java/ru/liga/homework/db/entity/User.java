@@ -1,7 +1,10 @@
 package ru.liga.homework.db.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -47,16 +50,20 @@ public class User {
     @JoinTable(name = "users_like", schema = "otpmm",
             joinColumns = {@JoinColumn(name = "user_id_who")},
             inverseJoinColumns = {@JoinColumn(name = "user_id_that")})
-    private Set<User> likeBy = new HashSet<>();
+    private Set<User> likes = new HashSet<>();
 
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name="users_like", schema = "otpmm",
-            joinColumns={@JoinColumn(name="user_id_that")},
-            inverseJoinColumns={@JoinColumn(name="user_id_who")})
-    private Set<User> likes = new HashSet<>();
+    @JoinTable(name = "users_like", schema = "otpmm",
+            joinColumns = {@JoinColumn(name = "user_id_that")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id_who")})
+    private Set<User> likeBy = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id", referencedColumnName = "user_id")
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_attach", schema = "otpmm",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "id")})
     private Attach attach;
+
 }
