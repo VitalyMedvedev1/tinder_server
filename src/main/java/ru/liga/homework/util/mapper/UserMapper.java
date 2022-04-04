@@ -1,4 +1,4 @@
-package ru.liga.homework.mapper;
+package ru.liga.homework.util.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

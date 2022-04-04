@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import ru.liga.homework.api.UserService;
 import ru.liga.homework.db.entity.User;
 import ru.liga.homework.db.repository.UserRepository;
-import ru.liga.homework.mapper.UserMapper;
+import ru.liga.homework.util.mapper.UserMapper;
 import ru.liga.homework.model.User.UserView;
 import ru.liga.homework.type.StaticConstant;
 
