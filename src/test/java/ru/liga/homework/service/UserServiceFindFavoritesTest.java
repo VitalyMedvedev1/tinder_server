@@ -2,19 +2,21 @@ package ru.liga.homework.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import static org.junit.jupiter.api.Assertions.*;
 import ru.liga.homework.api.UserService;
 import ru.liga.homework.db.entity.User;
 import ru.liga.homework.db.repository.UserRepository;
 import ru.liga.homework.mapper.UserMapper;
+import ru.liga.homework.model.User.UserView;
+import ru.liga.homework.type.StaticConstant;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceFindFavoritesTest {
@@ -42,7 +44,12 @@ class UserServiceFindFavoritesTest {
                         new User(8, "8", "8", "8", "8", "8", "8", "", "8", new HashSet<>(), new HashSet<>())
                 )));
 
-        Mockito.when(userRepository.findByUsername("123")).thenReturn(java.util.Optional.of(user));
-        userService.findFavorites("123");
+        Mockito.when(userRepository.findByUsername("")).thenReturn(java.util.Optional.of(user));
+        List<UserView> listUsers = userService.findFavorites("");
+
+        assertEquals(7, listUsers.size());
+        assertEquals(StaticConstant.LOVE, listUsers.stream().filter(userView -> userView.getId() == 7).map(UserView::getDescription).collect(Collectors.joining()));
+        assertEquals(StaticConstant.MUTUAL_LOVE, listUsers.stream().filter(userView -> userView.getId() == 1).map(UserView::getDescription).collect(Collectors.joining()));
+        assertEquals(StaticConstant.YOU_ARE_LOVE, listUsers.stream().filter(userView -> userView.getId() == 5).map(UserView::getDescription).collect(Collectors.joining()));
     }
 }

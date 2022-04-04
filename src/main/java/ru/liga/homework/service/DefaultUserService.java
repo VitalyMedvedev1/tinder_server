@@ -13,6 +13,7 @@ import ru.liga.homework.db.repository.UserRepository;
 import ru.liga.homework.exception.BusinessLogicException;
 import ru.liga.homework.mapper.UserMapper;
 import ru.liga.homework.model.User.UserView;
+import ru.liga.homework.type.StaticConstant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,16 +82,16 @@ public class DefaultUserService implements UserService {
                     if (usersWhoLikes.contains(userView1)) {
                         return false;
                     } else {
-                        userView1.setDescription("Вы любимы");
+                        userView1.setDescription(StaticConstant.LOVE);
                         return true;
                     }
                 }).collect(Collectors.toList());
         listFavoriteUsers.addAll(usersWhoLikes.stream()
                 .peek(userView1 -> {
                     if (usersWhoIsLike.contains(userView1)) {
-                        userView1.setDescription("Взаимность");
+                        userView1.setDescription(StaticConstant.MUTUAL_LOVE);
                     } else {
-                        userView1.setDescription("Любим");
+                        userView1.setDescription(StaticConstant.YOU_ARE_LOVE);
                     }
                 }).collect(Collectors.toList()));
         return listFavoriteUsers;
