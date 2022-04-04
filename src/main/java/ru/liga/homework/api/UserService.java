@@ -11,7 +11,7 @@ public interface UserService {
 
     void like(String userNameWhoLikes, String userNameWhoIsLike);
 
-    void findFavorites(String userName);
+    List<UserView> findFavorites(String userName);
 
     UserView findUsersWithPageable(String userName, int limit, int offset);
 }

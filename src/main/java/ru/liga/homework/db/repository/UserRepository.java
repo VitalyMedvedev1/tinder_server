@@ -21,5 +21,3 @@ public interface UserRepository extends JpaRepository<User, Long> {
                             "(LOOKINGFOR in ?3)", nativeQuery = true)
     List<User> findUsers(@Param("userid") Integer userId, List<String> genders, List<String> lookingfor,  PageRequest pageable);
 }
-
-//    LEFT JOIN OTPMM.USER_ATTACH ATT ON U.ID = ATT.USER_ID

@@ -7,8 +7,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.liga.homework.api.UsersFormService;
-import ru.liga.homework.db.entity.Attach;
-import ru.liga.homework.db.repository.AttachRepository;
 import ru.liga.homework.exception.BusinessLogicException;
 
 import javax.imageio.ImageIO;
@@ -38,8 +36,6 @@ import java.util.List;
 @Transactional
 public class DefaultUsersFormService implements UsersFormService {
 
-    private final AttachRepository attachRepository;
-
     private static final String BACKGROUND_FILE_NAME = "background.jpg";
     private static final String FONT_NAME = "Old Standard TT";
     private static final int FONT_SIZE = 64;
@@ -50,8 +46,8 @@ public class DefaultUsersFormService implements UsersFormService {
     private static final String USER_DIR = System.getProperty("user.dir");
 
     @Override
-    public String createUserForm(Integer userId, String header, String description) {
-        log.debug("Start create form for user {}", userId);
+    public String createUserForm(String userName, String header, String description) {
+        log.debug("Start create form for user {}", userName);
         try (InputStream inputStream = new ClassPathResource(BACKGROUND_FILE_NAME).getInputStream()) {
             BufferedImage image = ImageIO.read(inputStream);
             header = header + ",";
@@ -89,12 +85,12 @@ public class DefaultUsersFormService implements UsersFormService {
                 line.draw(g2, (float) LEFT_INDENT, y + line.getAscent());
                 y += line.getAscent() + line.getDescent() + line.getLeading();
             }
-            String fileName = saveUserFormOnDiscAndReturnPath(image, userId);
+            String fileName = saveUserFormOnDiscAndReturnPath(image, userName);
             image.flush();
             return fileName;
         } catch (IOException e) {
-            log.error("Error when create form for user {} \n {}", userId, e.getMessage());
-            throw new BusinessLogicException("Error when create form for user " + userId + "\n" + e.getMessage());
+            log.error("Error when create form for user {} \n {}", userName, e.getMessage());
+            throw new BusinessLogicException("Error when create form for user " + userName + "\n" + e.getMessage());
         }
     }
 
@@ -114,21 +110,16 @@ public class DefaultUsersFormService implements UsersFormService {
     }
 
     @Override
-    public String saveUserFormOnDiscAndReturnPath(BufferedImage image, Integer userId) {
+    public String saveUserFormOnDiscAndReturnPath(BufferedImage image, String userName) {
         try {
-            log.debug("Save form on disc for user {}", userId);
+            log.debug("Save form on disc for user {}", userName);
             File file = new File(USER_DIR + FILE_DIR + new Date().getTime() + "." + FILE_EXT);
             ImageIO.write(image, FILE_EXT, file);
             return file.getName();
         } catch (IOException e) {
-            log.error("Error when save form for user {} \n {}", userId, e.getMessage());
-            throw new BusinessLogicException("Error when save form for user " + userId + "\n" + e.getMessage());
+            log.error("Error when save form for user {} \n {}", userName, e.getMessage());
+            throw new BusinessLogicException("Error when save form for user " + userName + "\n" + e.getMessage());
         }
-    }
-
-    @Override
-    public void saveFileNameInDb(String fileName, Integer userId) {
-        attachRepository.save(new Attach(null, userId, fileName, ""));
     }
 
     @Override

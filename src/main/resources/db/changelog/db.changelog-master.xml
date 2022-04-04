@@ -7,7 +7,7 @@
 
     <include id="1" file="classpath:db/changelog/migration/sequence/001__SEQUENCE.sql" author="vemedvedev"/>
     <include id="2" file="classpath:db/changelog/migration/scheme/001__CREATE_TABLE_USERS.sql" author="vemedvedev"/>
-    <include id="3" file="classpath:db/changelog/migration/scheme/002__CREATE_TABLE_USER_ATTACH.sql" author="vemedvedev"/>
+<!--    <include id="3" file="classpath:db/changelog/migration/scheme/002__CREATE_TABLE_USER_ATTACH.sql" author="vemedvedev"/>-->
     <include id="4" file="classpath:db/changelog/migration/scheme/003__CREATE_TABLE_USERS_LIKE.sql" author="vemedvedev"/>
 
 

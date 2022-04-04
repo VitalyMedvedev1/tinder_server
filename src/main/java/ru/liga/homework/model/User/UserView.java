@@ -3,12 +3,12 @@ package ru.liga.homework.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.liga.homework.db.entity.Attach;
 import ru.liga.homework.type.Gender;
 import ru.liga.homework.type.LookingFor;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -27,7 +27,11 @@ public class UserView {
 
     @Enumerated(EnumType.STRING)
     private LookingFor lookingFor;
-    private String description;
-    private Attach attach;
+    private String formFileName;
     private String attachBase64Code;
+
+    private Set<UserView> likes;
+    private Set<UserView> likeBy;
+
+    private String description;
 }
