@@ -1,6 +1,8 @@
 package ru.liga.homework.util;
 
+import com.codepoetics.protonpack.StreamUtils;
 import lombok.extern.slf4j.Slf4j;
+import com.codepoetics.protonpack.Indexed;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -85,7 +87,7 @@ public class ConvertTextToPreRevolution {
                 }).collect(Collectors.joining(SPACE));
     }
 
-    private final HashSet<String> hashReplaceIATb = new HashSet<>(Arrays.asList(
+    private final List<String> hashReplaceIATb = new ArrayList<>(Arrays.asList(
             "еда", "ем", "есть", "обед", "обедня", "сыроежка", "сыроега", "медведь", "снедь", "едкий", "ехать", "езда", "уезд", "еду", "ездить", "поезд",
             "бег", "беглец", "беженец", "забегаловка", "избегать", "избежать", "набег", "перебежчик", "пробег", "разбег", "убежище", "центробежнаясила",
             "беда", "бедный", "победить", "убедить", "убеждение", "белый", "бельё", "белка", "бельмо", "белуга", "бес", "бешеный", "обет", "обещать", "веять",
@@ -115,6 +117,7 @@ public class ConvertTextToPreRevolution {
     protected String replaceIATb(String text) {
         log.debug("Convert text {}, replace e on symbol {}", text, IATb);
         List<String> listText = new ArrayList<>(Arrays.asList(text.split(REG_EXP_STRING)));
+        List<String> newListText = new ArrayList<>();
         return listText.stream()
                 .map(s -> {
                     if (hashReplaceIATb.contains(s)) {

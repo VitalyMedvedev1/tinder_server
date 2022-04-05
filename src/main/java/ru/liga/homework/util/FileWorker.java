@@ -34,7 +34,7 @@ public class FileWorker {
         try {
             fileContent = FileUtils.readFileToByteArray(new File(StaticConstant.USER_DIR + StaticConstant.FILE_DIR + fileName));
         } catch (IOException e) {
-            log.error("Error when get user form from path: {} {} {}", StaticConstant.USER_DIR + StaticConstant.FILE_DIR, fileName);
+            log.error("Error when get user form from path: {} {} {}", StaticConstant.USER_DIR, StaticConstant.FILE_DIR, fileName);
             throw new BusinessLogicException("Error when get user form from path: " + e.getMessage());
         }
         return Base64.getEncoder().encodeToString(fileContent);

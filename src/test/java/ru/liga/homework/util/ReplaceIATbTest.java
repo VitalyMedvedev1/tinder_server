@@ -11,13 +11,13 @@ class ReplaceIATbTest {
 
     @Test
     void replaceIATb() {
-        String repName = convertTextToPreRevolution.replaceIATb("Светлана");
+        String repName = convertTextToPreRevolution.replaceIATb("ем");
         assertTrue(repName.contains(String.valueOf(IATb)));
     }
 
-/*    @Test
+    @Test
     void replaceIATb_1() {
-        String repName = convertTextToPreRevolution.replaceIATb("скверсевернос");
+        String repName = convertTextToPreRevolution.replaceIATb("п1рение ппп пресный 1а - 7 свирепый");
         assertTrue(repName.contains(String.valueOf(IATb)));
-    }*/
+    }
 }

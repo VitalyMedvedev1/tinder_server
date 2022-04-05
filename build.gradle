@@ -37,6 +37,8 @@ dependencies {
     implementation "org.liquibase:liquibase-gradle-plugin:$liquibasegradleplugin"
     implementation "net.lbruun.springboot:preliquibase-spring-boot-starter:$preliquibasestarter"
 
+    implementation 'com.codepoetics:protonpack:1.1'
+
     implementation "org.junit.jupiter:junit-jupiter:$junitjupiter"
 
     implementation "junit:junit:$junitjunit"
