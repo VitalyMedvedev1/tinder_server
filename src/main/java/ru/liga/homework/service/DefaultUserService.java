@@ -11,9 +11,9 @@ import ru.liga.homework.api.UsersFormService;
 import ru.liga.homework.db.entity.User;
 import ru.liga.homework.db.repository.UserRepository;
 import ru.liga.homework.exception.BusinessLogicException;
-import ru.liga.homework.util.mapper.UserMapper;
 import ru.liga.homework.model.User.UserView;
 import ru.liga.homework.type.StaticConstant;
+import ru.liga.homework.util.mapper.UserMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,15 +98,6 @@ public class DefaultUserService implements UserService {
 
     }
 
-    private User findUserByName(String userName) {
-        log.info("Find user with name: {}", userName);
-        return userRepository.findByUsername(userName).orElseThrow(
-                () -> {
-                    log.error("User not found with login: {}", userName);
-                    return new BusinessLogicException("User not found with login: " + userName);
-                });
-    }
-
     @Override
     public UserView findUsersWithPageable(String userName, int offset, int size) {
         User user = findUserByName(userName);
@@ -130,6 +121,15 @@ public class DefaultUserService implements UserService {
                             log.error("Error when find next user for like");
                             throw new BusinessLogicException("Больше нет анкет подходящих вам");
                         });
+    }
+
+    private User findUserByName(String userName) {
+        log.info("Find user with name: {}", userName);
+        return userRepository.findByUsername(userName).orElseThrow(
+                () -> {
+                    log.error("User not found with login: {}", userName);
+                    return new BusinessLogicException("User not found with login: " + userName);
+                });
     }
 
     private String createFormAndSave(UserView userView) {
@@ -156,7 +156,7 @@ public class DefaultUserService implements UserService {
         userView.setAttachBase64Code(formBase64);
     }
 
-    public void addSearchCriteria(User user, List<String> genders, List<String> lookingFor) {
+    private void addSearchCriteria(User user, List<String> genders, List<String> lookingFor) {
         switch (user.getLookingFor()) {
             case "MALES":
                 genders.add("MALE");

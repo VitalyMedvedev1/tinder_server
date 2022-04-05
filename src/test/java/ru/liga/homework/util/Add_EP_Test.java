@@ -9,27 +9,27 @@ import static org.junit.jupiter.api.Assertions.*;
 class Add_EP_Test {
 
     public final ConvertTextToPreRevolution convertTextToPreRevolution = new ConvertTextToPreRevolution();
-    private static final char c = 0x42A;
+    private static final char EP = 0x42A;
 
     @Test
-    void addEP1() {
-        String str = convertTextToPreRevolution.convert("[к]");
-        assertFalse(str.contains(String.valueOf(c)));
+    void notAddEP() {
+        String str = convertTextToPreRevolution.addEP("[к]");
+        assertFalse(str.contains(String.valueOf(EP)));
     }
 
     @Test
-    void addEP2() {
-        String str = convertTextToPreRevolution.convert("кот");
-        assertTrue(str.contains(String.valueOf(c)));
+    void addEP() {
+        String str = convertTextToPreRevolution.addEP("кот");
+        assertTrue(str.contains(String.valueOf(EP)));
     }
 
     @Test
-    void addEP3() {
-        String str = convertTextToPreRevolution.convert("Для понимания объясним «на пальцах». Если согласная буква в разных словах означает либо мягкий, либо твёрдый звук, то звук относится к парным. Например");
+    void addEPinString() {
+        String str = convertTextToPreRevolution.addEP("Для понимания объясним «на пальцах». Если согласная буква в разных словах означает либо мягкий, либо твёрдый звук, то звук относится к парным. Например");
 
         long count = Arrays
                 .stream(str.split("[\\s,.:!?]+"))
-                .filter(s -> s.contains(String.valueOf(c)))
+                .filter(s -> s.contains(String.valueOf(EP)))
                 .count();
         assertEquals(10, count);
     }

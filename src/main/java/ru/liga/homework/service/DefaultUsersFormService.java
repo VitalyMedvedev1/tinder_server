@@ -29,7 +29,7 @@ import java.util.List;
  * Накладывание текста на картинку(фон). Берем 2 поля с клиента: header и Description, берем прямоугольник в качесве основы с размерами картинки.
  * По циклу берем шрифт 64, делем на ликии по размеру прямоуголдьника и вычисляем высоту, если больше чем размер прямоугольника, уменьшаем шрифт.
  * Если текст подошел по размеру, вприсываем на картинку.
- * **/
+ **/
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -94,21 +94,6 @@ public class DefaultUsersFormService implements UsersFormService {
         }
     }
 
-    private float calcTextHeightAndTextLine(String text, List<TextLayout> textLines, Font font, Graphics2D graphics2D, Rectangle rectangle) {
-        log.debug("Start calc Text Height FORM");
-        AttributedString attributedString = new AttributedString(text);
-        attributedString.addAttribute(TextAttribute.FONT, font);
-        AttributedCharacterIterator iterator = attributedString.getIterator();
-        LineBreakMeasurer measurer = new LineBreakMeasurer(iterator, graphics2D.getFontRenderContext());
-        float textHeight;
-        while (measurer.getPosition() < text.length()) {
-            textLines.add(measurer.nextLayout(rectangle.width - LEFT_INDENT));
-        }
-        textHeight =  textLines.stream().mapToInt(t -> (int) (t.getAscent() + t.getDescent() + t.getLeading())).sum();
-        log.debug("Text Height: {}", textHeight);
-        return textHeight;
-    }
-
     @Override
     public String saveUserFormOnDiscAndReturnPath(BufferedImage image, String userName) {
         try {
@@ -132,5 +117,20 @@ public class DefaultUsersFormService implements UsersFormService {
             throw new BusinessLogicException("Error when get user form from path: " + e.getMessage());
         }
         return Base64.getEncoder().encodeToString(fileContent);
+    }
+
+    private float calcTextHeightAndTextLine(String text, List<TextLayout> textLines, Font font, Graphics2D graphics2D, Rectangle rectangle) {
+        log.debug("Start calc Text Height FORM");
+        AttributedString attributedString = new AttributedString(text);
+        attributedString.addAttribute(TextAttribute.FONT, font);
+        AttributedCharacterIterator iterator = attributedString.getIterator();
+        LineBreakMeasurer measurer = new LineBreakMeasurer(iterator, graphics2D.getFontRenderContext());
+        float textHeight;
+        while (measurer.getPosition() < text.length()) {
+            textLines.add(measurer.nextLayout(rectangle.width - LEFT_INDENT));
+        }
+        textHeight = textLines.stream().mapToInt(t -> (int) (t.getAscent() + t.getDescent() + t.getLeading())).sum();
+        log.debug("Text Height: {}", textHeight);
+        return textHeight;
     }
 }

@@ -28,7 +28,7 @@ public class UserController {
 
     @GetMapping("/users/{username1}/likes/{username2}")
     public void like(@PathVariable("username1") String userNameWhoLike,
-                         @PathVariable("username2") String userNameWhoWasLike) {
+                     @PathVariable("username2") String userNameWhoWasLike) {
         userService.like(userNameWhoLike, userNameWhoWasLike);
     }
 
@@ -39,8 +39,8 @@ public class UserController {
 
     @GetMapping("/users")
     public UserView findUsersWithPageable(@RequestParam(value = "username") String userName,
-                            @RequestParam(value = "offset") int offset,
-                            @RequestParam(value = "size") int size) {
+                                          @RequestParam(value = "offset") int offset,
+                                          @RequestParam(value = "size") int size) {
         return userService.findUsersWithPageable(userName, offset, size);
     }
 }
