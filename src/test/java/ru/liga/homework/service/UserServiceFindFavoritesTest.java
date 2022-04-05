@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import ru.liga.homework.api.UserService;
 import ru.liga.homework.db.entity.User;
 import ru.liga.homework.db.repository.UserRepository;
+import ru.liga.homework.util.ConvertTextToPreRevolution;
+import ru.liga.homework.util.FileWorker;
 import ru.liga.homework.util.mapper.UserMapper;
 import ru.liga.homework.model.User.UserView;
 import ru.liga.homework.type.StaticConstant;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 class UserServiceFindFavoritesTest {
 
     public final UserRepository userRepository = Mockito.mock(UserRepository.class);
-    public final UserService userService = new DefaultUserService(userRepository, new ModelMapper(), new UserMapper(new ModelMapper()), new DefaultUsersFormService());
+    public final UserService userService = new DefaultUserService(userRepository, new ModelMapper(), new UserMapper(new ModelMapper()), new DefaultUsersFormService(new FileWorker()), new ConvertTextToPreRevolution(), new FileWorker());
 
     @Test
     public void findFavorites() {

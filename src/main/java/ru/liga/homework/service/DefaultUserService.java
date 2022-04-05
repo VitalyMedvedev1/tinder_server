@@ -3,6 +3,7 @@ package ru.liga.homework.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +14,14 @@ import ru.liga.homework.db.repository.UserRepository;
 import ru.liga.homework.exception.BusinessLogicException;
 import ru.liga.homework.model.User.UserView;
 import ru.liga.homework.type.StaticConstant;
+import ru.liga.homework.util.ConvertTextToPreRevolution;
+import ru.liga.homework.util.FileWorker;
 import ru.liga.homework.util.mapper.UserMapper;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -26,10 +33,15 @@ import java.util.stream.Collectors;
 @Transactional
 public class DefaultUserService implements UserService {
 
+    @PersistenceUnit
+    private EntityManagerFactory entityManagerFactory;
+
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final UserMapper userMapper;
     private final UsersFormService usersFormService;
+    private final ConvertTextToPreRevolution convertTextToPreRevolution;
+    private final FileWorker fileWorker;
 
     @Override
     public UserView find(String userName) {
@@ -45,16 +57,45 @@ public class DefaultUserService implements UserService {
 
     @Override
     public UserView create(UserView userView) {
+        try {
+            String fileName = createUserForm(userView);
+            userView.setFormFileName(fileName);
 
-        String fileName = createUserForm(userView);
-        userView.setFormFileName(fileName);
+            log.info("Save user with name: {}", userView.getName());
 
-        log.info("Save user with name: {}", userView.getName());
-        User user = userRepository.save(modelMapper.map(userView, User.class));
+            EntityManager em = entityManagerFactory.createEntityManager();
+            EntityTransaction tx = em.getTransaction();
+            tx.begin();
+            User user;
+            try {
+                user = userRepository.save(modelMapper.map(userView, User.class));
+                tx.commit();
+            }
+            catch (Exception e){
+                tx.rollback();
+                log.error("Error wen create new user with login {} \n Error message: {}", userView.getName(), e.getCause().getCause().getMessage());
+                if ((fileName = userView.getFormFileName()) != null) {
+                    fileWorker.deleteFileFromDisc(fileName);
+                }
+                throw new BusinessLogicException("Error create new user: " + e.getCause().getCause().getMessage());
+            }
 
-        userView.setId(user.getId());
-        createBase64CodeFromUserForm(userView, userView.getFormFileName());
+            //String fileName = createUserForm(userView);
+            //user.setFormFileName(fileName);
+            //userRepository.save(user);
 
+            userView.setFormFileName(fileName);
+            userView.setId(user.getId());
+            createBase64CodeFromUserForm(userView, userView.getFormFileName());
+        }
+        catch (DataIntegrityViolationException e){
+            log.error("Error wen create new user with login {} \n Error message: {}", userView.getName(), e.getCause().getCause().getMessage());
+            String fileName;
+            if ((fileName = userView.getFormFileName()) != null) {
+               fileWorker.deleteFileFromDisc(fileName);
+            }
+            throw new BusinessLogicException("Error create new user: " + e.getCause().getCause().getMessage());
+        }
         return userView;
     }
 
@@ -123,6 +164,13 @@ public class DefaultUserService implements UserService {
                         });
     }
 
+    @Override
+    public UserView update(UserView userView) {
+        log.info("Update user, username: {}", userView.getUsername());
+        userRepository.save(modelMapper.map(userView, User.class));
+        return userView;
+    }
+
     private User findUserByName(String userName) {
         log.info("Find user with name: {}", userName);
         return userRepository.findByUsername(userName).orElseThrow(
@@ -143,7 +191,9 @@ public class DefaultUserService implements UserService {
 
     private String createUserForm(UserView userView) {
         log.info("Create form for user with name: {} id: {}", userView.getName(), userView.getId());
-        String fileName = usersFormService.createUserForm(userView.getUsername(), userView.getHeader(), userView.getDescription());
+        String fileName = usersFormService.createUserForm(userView.getUsername(),
+                                                            convertTextToPreRevolution.convert(userView.getHeader()),
+                                                            convertTextToPreRevolution.convert(userView.getDescription()));
 
         log.info("Save form on user with formName: {} username: {}", fileName, userView.getUsername());
         return fileName;
@@ -151,7 +201,7 @@ public class DefaultUserService implements UserService {
 
     private void createBase64CodeFromUserForm(UserView userView, String fileName) {
         log.info("Code attach in Base64");
-        String formBase64 = usersFormService.getUserFormInBase64Format(fileName);
+        String formBase64 = fileWorker.getUserFormInBase64Format(fileName);
         log.info("Save attach in base64 UserView");
         userView.setAttachBase64Code(formBase64);
     }

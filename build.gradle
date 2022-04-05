@@ -1,8 +1,8 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.6.4'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'org.liquibase.gradle' version '1.2.4'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagement}"
+    id 'org.liquibase.gradle' version "${liquibaseGradle}"
 }
 
 group 'ru.liga.homework'
@@ -12,19 +12,35 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    mindrotjbcrypt = '0.4'
+    projectlomboklombok = '1.18.20'
+    modelmappermodelmapper = '3.1.0'
+    liquibaseliquibasecore = '4.9.0'
+    liquibasegradleplugin = '2.1.1'
+    preliquibasestarter = '1.1.1'
+    junitjupiter = '5.7.0'
+    junitjunit = '4.12'
+    commonsio = '2.11.0'
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.projectlombok:lombok:1.18.20'
-    implementation 'org.modelmapper:modelmapper:3.1.0'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.mindrot:jbcrypt:0.4'
-    implementation 'junit:junit:4.12'
-    implementation 'org.liquibase:liquibase-core:4.9.0'
-    implementation 'org.liquibase:liquibase-gradle-plugin:2.1.1'
-    implementation 'net.lbruun.springboot:preliquibase-spring-boot-starter:1.1.1'
-    implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
-    implementation 'commons-io:commons-io:2.11.0'
+
+    implementation "org.mindrot:jbcrypt:$mindrotjbcrypt"
+    implementation "org.projectlombok:lombok:$projectlomboklombok"
+    implementation "org.modelmapper:modelmapper:$modelmappermodelmapper"
+
+    implementation "org.liquibase:liquibase-core:$liquibaseliquibasecore"
+    implementation "org.liquibase:liquibase-gradle-plugin:$liquibasegradleplugin"
+    implementation "net.lbruun.springboot:preliquibase-spring-boot-starter:$preliquibasestarter"
+
+    implementation "org.junit.jupiter:junit-jupiter:$junitjupiter"
+
+    implementation "junit:junit:$junitjunit"
+    implementation "commons-io:commons-io:$commonsio"
 
     runtimeOnly 'org.postgresql:postgresql'
 

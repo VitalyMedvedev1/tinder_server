@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class Add_EP_Test {
 
     public final ConvertTextToPreRevolution convertTextToPreRevolution = new ConvertTextToPreRevolution();
-    private static final char EP = 0x42A;
+    private static final char EP = 0x44A;
 
     @Test
     void notAddEP() {

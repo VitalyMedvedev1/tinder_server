@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class ConvertTextToPreRevolution {
 
     private static final String REG_EXP_STRING = "[\\s,.:!?]+";
-    private static final char EP = 0x42A;
+    private static final char EP = 0x44A;
     private static final String CONSONANTS_PATTERN = "[бпвфдтзсжшчцщгкхмнлрБПВФДТЗСЖШЧЦЩГКХМНЛР]$";
     private static final char I_DECIMAL = 0x456;
     private static final String I_DECIMAL_PATTERN = "[иИ]+[ауоыэяюёиеАУОЫЭЯЮЁИЕйЙ]";
@@ -28,11 +28,9 @@ public class ConvertTextToPreRevolution {
     private static final int INDX_FIRST = 0;
     private static final int INDX_LAST = 1;
 
-    protected String convert(String text) {
-
-        text = addEP(text);
-
-        return text;
+    public String convert(String text) {
+        log.info("Start convert text {} to pre-revolution text", text);
+        return addEP(replace_i_decimal(replaceFITAinUserName(replaceIATb(text))));
     }
 
     protected String addEP(String text) {

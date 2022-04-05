@@ -2,12 +2,12 @@ package ru.liga.homework.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.liga.homework.api.UsersFormService;
 import ru.liga.homework.exception.BusinessLogicException;
+import ru.liga.homework.util.FileWorker;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -15,14 +15,11 @@ import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,14 +33,12 @@ import java.util.List;
 @Transactional
 public class DefaultUsersFormService implements UsersFormService {
 
+    private final FileWorker fileWorker;
     private static final String BACKGROUND_FILE_NAME = "background.jpg";
     private static final String FONT_NAME = "Old Standard TT";
     private static final int FONT_SIZE = 64;
     private static final int FONT_HEADER_SIZE = 10;
     private static final int LEFT_INDENT = 15;
-    private static final String FILE_EXT = "jpg";
-    private static final String FILE_DIR = "/forms/";
-    private static final String USER_DIR = System.getProperty("user.dir");
 
     @Override
     public String createUserForm(String userName, String header, String description) {
@@ -85,38 +80,13 @@ public class DefaultUsersFormService implements UsersFormService {
                 line.draw(g2, (float) LEFT_INDENT, y + line.getAscent());
                 y += line.getAscent() + line.getDescent() + line.getLeading();
             }
-            String fileName = saveUserFormOnDiscAndReturnPath(image, userName);
+            String fileName = fileWorker.saveUserFormOnDiscAndReturnPath(image, userName);
             image.flush();
             return fileName;
         } catch (IOException e) {
             log.error("Error when create form for user {} \n {}", userName, e.getMessage());
             throw new BusinessLogicException("Error when create form for user " + userName + "\n" + e.getMessage());
         }
-    }
-
-    @Override
-    public String saveUserFormOnDiscAndReturnPath(BufferedImage image, String userName) {
-        try {
-            log.debug("Save form on disc for user {}", userName);
-            File file = new File(USER_DIR + FILE_DIR + new Date().getTime() + "." + FILE_EXT);
-            ImageIO.write(image, FILE_EXT, file);
-            return file.getName();
-        } catch (IOException e) {
-            log.error("Error when save form for user {} \n {}", userName, e.getMessage());
-            throw new BusinessLogicException("Error when save form for user " + userName + "\n" + e.getMessage());
-        }
-    }
-
-    @Override
-    public String getUserFormInBase64Format(String fileName) {
-        byte[] fileContent;
-        try {
-            fileContent = FileUtils.readFileToByteArray(new File(USER_DIR + FILE_DIR + fileName));
-        } catch (IOException e) {
-            log.error("Error when get user form from path: {} {} {}", USER_DIR, FILE_DIR, fileName);
-            throw new BusinessLogicException("Error when get user form from path: " + e.getMessage());
-        }
-        return Base64.getEncoder().encodeToString(fileContent);
     }
 
     private float calcTextHeightAndTextLine(String text, List<TextLayout> textLines, Font font, Graphics2D graphics2D, Rectangle rectangle) {

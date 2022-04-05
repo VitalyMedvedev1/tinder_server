@@ -11,10 +11,10 @@ import java.util.Arrays;
 @Getter
 public class ErrorResponse {
 
-    private static final String LEVEL = "ERROR";
+    private final String level = "ERROR";
     private String message;
     private String[] stacktrace;
-    private static final LocalDateTime localDateTime = LocalDateTime.now();
+    private final String date = LocalDateTime.now().toString();
 
     public static ErrorResponse build(String message, StackTraceElement[] stacktrace) {
         ErrorResponse errorResponse = new ErrorResponse();

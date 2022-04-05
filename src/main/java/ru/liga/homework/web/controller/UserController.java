@@ -26,6 +26,11 @@ public class UserController {
         return userService.find(userName);
     }
 
+    @PostMapping("/users/user")
+    public UserView update(@RequestBody UserView userView) {
+        return userService.update(userView);
+    }
+
     @GetMapping("/users/{username1}/likes/{username2}")
     public void like(@PathVariable("username1") String userNameWhoLike,
                      @PathVariable("username2") String userNameWhoWasLike) {
