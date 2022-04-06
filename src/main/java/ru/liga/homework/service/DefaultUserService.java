@@ -3,7 +3,6 @@ package ru.liga.homework.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +17,7 @@ import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.FileWorker;
 import ru.liga.homework.util.mapper.UserMapper;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,41 +54,29 @@ public class DefaultUserService implements UserService {
 
     @Override
     public UserView create(UserView userView) {
+
+        log.info("Find user with name: {}", userView.getName());
+        if (userRepository.findByUsername(userView.getName()).isPresent()) {
+            throw new BusinessLogicException("User with name already exist: " + userView.getName());
+        }
+
+        log.info("Save user with name: {}", userView.getName());
+        User user = userRepository.save(modelMapper.map(userView, User.class));
+        String fileName;
         try {
-            String fileName = createUserForm(userView);
-            userView.setFormFileName(fileName);
-
-            log.info("Save user with name: {}", userView.getName());
-
-//            EntityManager em = entityManagerFactory.createEntityManager();
-//            EntityTransaction tx = em.getTransaction();
-//            tx.begin();
-            User user;
-            try {
-                user = userRepository.save(modelMapper.map(userView, User.class));
-            } catch (Exception e) {
-                log.error("Error wen create new user with login {} \n Error message: {}", userView.getName(), e.getCause().getCause().getMessage());
-                if ((fileName = userView.getFormFileName()) != null) {
-                    fileWorker.deleteFileFromDisc(fileName);
-                }
-                throw new BusinessLogicException("Error create new user: " + e.getCause().getCause().getMessage());
-            }
-
-            //String fileName = createUserForm(userView);
-            //user.setFormFileName(fileName);
-            //userRepository.save(user);
-
+            fileName = createUserForm(userView);
             userView.setFormFileName(fileName);
             userView.setId(user.getId());
-            createBase64CodeFromUserForm(userView, userView.getFormFileName());
-        } catch (DataIntegrityViolationException e) {
-            log.error("Error wen create new user with login {} \n Error message: {}", userView.getName(), e.getCause().getCause().getMessage());
-            String fileName;
+            userRepository.save(modelMapper.map(userView, User.class));
+        } catch (Exception e) {
+            log.error("Error wen create user form with login {} \n Error message: {}", userView.getName(), e.getMessage());
             if ((fileName = userView.getFormFileName()) != null) {
                 fileWorker.deleteFileFromDisc(fileName);
             }
-            throw new BusinessLogicException("Error create new user: " + e.getCause().getCause().getMessage());
+            throw new BusinessLogicException("Error create new user: " + e.getMessage());
         }
+
+        createBase64CodeFromUserForm(userView, fileName);
         return userView;
     }
 
