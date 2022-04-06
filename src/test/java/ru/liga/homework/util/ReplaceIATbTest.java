@@ -2,7 +2,10 @@ package ru.liga.homework.util;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ReplaceIATbTest {
 
@@ -11,13 +14,18 @@ class ReplaceIATbTest {
 
     @Test
     void replaceIATb() {
-        String repName = convertTextToPreRevolution.replaceIATb("ем");
-        assertTrue(repName.contains(String.valueOf(IATb)));
+        String str = convertTextToPreRevolution.replaceIATb("ем");
+        assertTrue(str.contains(String.valueOf(IATb)));
     }
 
     @Test
     void replaceIATb_1() {
-        String repName = convertTextToPreRevolution.replaceIATb("п1рение ппп пресный 1а - 7 свирепый");
-        assertTrue(repName.contains(String.valueOf(IATb)));
+        String str = convertTextToPreRevolution.replaceIATb("п1ремние hdgвеникывапр пепп престьный 1а - 66зверь78 4еее7 свирепый еда");
+        assertTrue(str.contains(String.valueOf(IATb)));
+        long count = Arrays
+                .stream(str.split("[\\s,.:!?]+"))
+                .filter(s -> s.contains(String.valueOf(IATb)))
+                .count();
+        assertEquals(6, count);
     }
 }
