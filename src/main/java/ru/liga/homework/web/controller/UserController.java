@@ -26,7 +26,7 @@ public class UserController {
         return userService.find(userName);
     }
 
-    @PostMapping("/users/user")
+    @PutMapping("/users")
     public UserView update(@RequestBody UserView userView) {
         return userService.update(userView);
     }
