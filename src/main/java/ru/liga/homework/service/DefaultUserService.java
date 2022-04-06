@@ -17,8 +17,6 @@ import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.FileWorker;
 import ru.liga.homework.util.mapper.UserMapper;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -30,9 +28,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class DefaultUserService implements UserService {
 
-    @PersistenceUnit
-    private EntityManagerFactory entityManagerFactory;
-
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final UserMapper userMapper;
@@ -42,7 +37,7 @@ public class DefaultUserService implements UserService {
 
     @Override
     public UserView find(String userName) {
-        log.info("Find user with name: {}", userName);
+        log.info("Find user with UserName: {}", userName);
         UserView userView = userMapper.map(findUserByName(userName));
         String fileName = userView.getFormFileName();
         if (fileName == null) {
@@ -55,12 +50,12 @@ public class DefaultUserService implements UserService {
     @Override
     public UserView create(UserView userView) {
 
-        log.info("Find user with name: {}", userView.getName());
-        if (userRepository.findByUsername(userView.getName()).isPresent()) {
-            throw new BusinessLogicException("User with name already exist: " + userView.getName());
+        log.info("Find user with UserName: {}", userView.getUsername());
+        if (userRepository.findByUsername(userView.getUsername()).isPresent()) {
+            throw new BusinessLogicException("User with name already exist: " + userView.getUsername());
         }
 
-        log.info("Save user with name: {}", userView.getName());
+        log.info("Save user with UserName: {}", userView.getUsername());
         User user = userRepository.save(modelMapper.map(userView, User.class));
         String fileName;
         try {
@@ -69,7 +64,7 @@ public class DefaultUserService implements UserService {
             userView.setId(user.getId());
             userRepository.save(modelMapper.map(userView, User.class));
         } catch (Exception e) {
-            log.error("Error wen create user form with login {} \n Error message: {}", userView.getName(), e.getMessage());
+            log.error("Error wen create user form with login {} \n Error message: {}", userView.getUsername(), e.getMessage());
             if ((fileName = userView.getFormFileName()) != null) {
                 fileWorker.deleteFileFromDisc(fileName);
             }
@@ -147,13 +142,13 @@ public class DefaultUserService implements UserService {
 
     @Override
     public UserView update(UserView userView) {
-        log.info("Update user, username: {}", userView.getUsername());
+        log.info("Update user, UserName: {}", userView.getUsername());
         userRepository.save(modelMapper.map(userView, User.class));
         return userView;
     }
 
     private User findUserByName(String userName) {
-        log.info("Find user with name: {}", userName);
+        log.info("Find user with UserName: {}", userName);
         return userRepository.findByUsername(userName).orElseThrow(
                 () -> {
                     log.error("User not found with login: {}", userName);
@@ -171,7 +166,7 @@ public class DefaultUserService implements UserService {
     }
 
     private String createUserForm(UserView userView) {
-        log.info("Create form for user with name: {} id: {}", userView.getName(), userView.getId());
+        log.info("Create form for user with UserName: {} id: {}", userView.getUsername(), userView.getId());
         String fileName = usersFormService.createUserForm(userView.getUsername(),
                 convertTextToPreRevolution.convert(userView.getHeader()),
                 convertTextToPreRevolution.convert(userView.getDescription()));
@@ -183,7 +178,7 @@ public class DefaultUserService implements UserService {
     private void createBase64CodeFromUserForm(UserView userView, String fileName) {
         log.info("Code attach in Base64");
         String formBase64 = fileWorker.getUserFormInBase64Format(fileName);
-        log.info("Save attach in base64 UserView");
+        log.info("Save attach in base64 UserName:" + userView.getUsername());
         userView.setAttachBase64Code(formBase64);
     }
 

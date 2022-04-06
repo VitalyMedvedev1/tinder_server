@@ -42,7 +42,7 @@ public class DefaultUsersFormService implements UsersFormService {
 
     @Override
     public String createUserForm(String userName, String header, String description) {
-        log.debug("Start create form for user {}", userName);
+        log.debug("Start create form for userName {}", userName);
         try (InputStream inputStream = new ClassPathResource(BACKGROUND_FILE_NAME).getInputStream()) {
             BufferedImage image = ImageIO.read(inputStream);
             header = header + ",";
@@ -84,8 +84,8 @@ public class DefaultUsersFormService implements UsersFormService {
             image.flush();
             return fileName;
         } catch (IOException e) {
-            log.error("Error when create form for user {} \n {}", userName, e.getMessage());
-            throw new BusinessLogicException("Error when create form for user " + userName + "\n" + e.getMessage());
+            log.error("Error when create form for userName {} \n {}", userName, e.getMessage());
+            throw new BusinessLogicException("Error when create form for userName " + userName + "\n" + e.getMessage());
         }
     }
 
