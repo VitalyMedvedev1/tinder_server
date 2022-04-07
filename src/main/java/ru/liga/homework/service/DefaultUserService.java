@@ -143,6 +143,7 @@ public class DefaultUserService implements UserService {
 
     @Override
     public UserView update(UserView userView) {
+        findUserByName(userView.getName());
         log.info("Update user, UserName: {}", userView.getUsername());
         userRepository.save(modelMapper.map(userView, User.class));
         return userView;
