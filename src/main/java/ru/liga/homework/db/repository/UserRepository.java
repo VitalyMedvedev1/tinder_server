@@ -1,5 +1,6 @@
 package ru.liga.homework.db.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,5 +20,5 @@ public interface UserRepository extends JpaRepository<User, Long>{
                             "U.ID NOT IN (SELECT UL.USER_ID_THAT FROM OTPMM.USERS_LIKE UL WHERE UL.USER_ID_WHO = ?1) AND " +
                             "(GENDER IN ?2) AND " +
                             "(LOOKINGFOR in ?3)", nativeQuery = true)
-    List<User> findUsers(@Param("userid") Integer userid, List<String> genders, List<String> lookingfor,  PageRequest pageable);
+    Page<User> findUsers(@Param("userid") Integer userid, List<String> genders, List<String> lookingfor, PageRequest pageable);
 }

@@ -2,9 +2,11 @@ package ru.liga.homework.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.liga.homework.api.UserService;
+import ru.liga.homework.db.entity.User;
 import ru.liga.homework.model.User.UserView;
 
 @Slf4j
@@ -43,9 +45,9 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public UserView findUsersWithPageable(@RequestParam(value = "username") String userName,
-                                          @RequestParam(value = "offset") int offset,
-                                          @RequestParam(value = "size") int size) {
+    public Page<UserView> findUsersWithPageable(@RequestParam(value = "username") String userName,
+                                            @RequestParam(value = "offset") int offset,
+                                            @RequestParam(value = "size") int size) {
         return userService.findUsersWithPageable(userName, offset, size);
     }
 }

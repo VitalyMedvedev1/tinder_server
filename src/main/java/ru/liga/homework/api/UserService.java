@@ -1,5 +1,6 @@
 package ru.liga.homework.api;
 
+import org.springframework.data.domain.Page;
 import ru.liga.homework.model.User.UserView;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface UserService {
 
     List<UserView> findFavorites(String userName);
 
-    UserView findUsersWithPageable(String userName, int limit, int offset);
+    Page<UserView> findUsersWithPageable(String userName, int offset, int size);
 
     UserView update(UserView userView);
 }

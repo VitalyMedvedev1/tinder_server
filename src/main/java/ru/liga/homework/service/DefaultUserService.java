@@ -3,7 +3,9 @@ package ru.liga.homework.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.liga.homework.api.UserService;
@@ -117,28 +119,27 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public UserView findUsersWithPageable(String userName, int offset, int size) {
+    public Page<UserView> findUsersWithPageable(String userName, int offset, int size) {
         User user = findUserByName(userName);
-        PageRequest pageable = PageRequest.of(offset, size);
+        PageRequest page = PageRequest.of(offset, size);
         List<String> genders = new ArrayList<>();
         List<String> lookingFor = new ArrayList<>();
         addSearchCriteria(user, genders, lookingFor);
 
-        return userRepository.findUsers(user.getId(), genders, lookingFor, pageable).stream()
-                .map(user1 -> modelMapper.map(user1, UserView.class))
-                .peek(userView1 -> {
+        Page<User> userPage = userRepository.findUsers(user.getId(), genders, lookingFor, page);
+
+        List<UserView> listUserView = userPage.getContent()
+                .stream()
+                .map(user1 -> modelMapper.map(user1, UserView.class)).peek(userView1 -> {
                     String fileName = userView1.getFormFileName();
                     if (fileName == null) {
                         createBase64CodeFromUserForm(userView1, createFormAndSave(userView1));
                     } else {
                         createBase64CodeFromUserForm(userView1, fileName);
                     }
-                })
-                .findFirst().orElseThrow(
-                        () -> {
-                            log.error("Error when find next user for like");
-                            throw new BusinessLogicException("Больше нет анкет подходящих вам");
-                        });
+                }).collect(Collectors.toList());
+
+        return PageableExecutionUtils.getPage(listUserView, page, userPage::getTotalElements);
     }
 
     @Override
