@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.liga.homework.exception.BusinessLogicException;
 import ru.liga.homework.web.response.ErrorResponse;
 
+import javax.persistence.EntityNotFoundException;
 import java.sql.SQLException;
 
 
@@ -18,6 +19,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> customException(BusinessLogicException e) {
         ErrorResponse response = ErrorResponse.build(e.getMessage(), e.getStackTrace());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> defaultException(EntityNotFoundException e) {
+        ErrorResponse response = ErrorResponse.build(e.getMessage(), e.getStackTrace());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(RuntimeException.class)

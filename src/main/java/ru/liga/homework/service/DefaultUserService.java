@@ -17,6 +17,7 @@ import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.FileWorker;
 import ru.liga.homework.util.mapper.UserMapper;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -152,7 +153,7 @@ public class DefaultUserService implements UserService {
         return userRepository.findByUsername(userName).orElseThrow(
                 () -> {
                     log.error("User not found with login: {}", userName);
-                    return new BusinessLogicException("User not found with login: " + userName);
+                    return new EntityNotFoundException("User not found with login: " + userName);
                 });
     }
 
