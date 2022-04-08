@@ -14,7 +14,7 @@ public interface UserService {
 
     List<UserView> findFavorites(Long userTgId);
 
-    Page<UserView> findUsersWithPageable(Long userTgId, int offset, int size);
+    Page<UserView> findUsersWithPageable(Long userTgId, int page, int size);
 
     UserView update(UserView userView);
 }

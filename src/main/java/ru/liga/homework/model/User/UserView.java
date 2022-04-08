@@ -30,11 +30,11 @@ public class UserView {
     private LookingFor lookingFor;
     private String formFileName;
     private String attachBase64Code;
-
-    @JsonIgnore
-    private Set<UserView> likes;
-    @JsonIgnore
-    private Set<UserView> likeBy;
+//
+//    @JsonIgnore
+//    private Set<UserView> likes;
+//    @JsonIgnore
+//    private Set<UserView> likeBy;
 
     private String description;
 }

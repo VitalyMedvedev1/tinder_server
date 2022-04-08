@@ -48,12 +48,14 @@ public class User {
     @Column(name = "form_file_name")
     private String formFileName;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "users_like", schema = "otpmm",
             joinColumns = {@JoinColumn(name = "user_id_who")},
             inverseJoinColumns = {@JoinColumn(name = "user_id_that")})
     private Set<User> likes = new HashSet<>();
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "users_like", schema = "otpmm",
             joinColumns = {@JoinColumn(name = "user_id_that")},

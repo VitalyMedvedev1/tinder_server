@@ -46,8 +46,8 @@ public class UserController {
 
     @GetMapping("/users")
     public Page<UserView> findUsersWithPageable(@RequestParam(value = "username") Long userTgId,
-                                            @RequestParam(value = "offset") int offset,
+                                            @RequestParam(value = "page") int page,
                                             @RequestParam(value = "size") int size) {
-        return userService.findUsersWithPageable(userTgId, offset, size);
+        return userService.findUsersWithPageable(userTgId, page, size);
     }
 }

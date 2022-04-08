@@ -22,7 +22,6 @@ import ru.liga.homework.util.mapper.UserMapper;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,11 +41,6 @@ public class DefaultUserService implements UserService {
     @Override
     public UserView find(Long userTgId) {
         log.info("Find user with UserName: {}", userTgId);
-        Optional<User> user = userRepository.findById(6L);
-        User user2 = findUserByName(userTgId);
-//        user.getLikes().clear();
-//        user.getLikeBy().clear();
-        UserView userView1 = modelMapper.map(user, UserView.class);
         UserView userView = userMapper.map(findUserByName(userTgId));
         String fileName = userView.getFormFileName();
         if (fileName == null) {
@@ -88,7 +82,7 @@ public class DefaultUserService implements UserService {
     @Override
     public void like(Long userTgIdWhoLikes, Long userTgIdWhoIsLike) {
         if (userTgIdWhoLikes.equals(userTgIdWhoIsLike)) {
-            throw new BusinessLogicException("User cant like yourself, name: " +userTgIdWhoLikes);
+            throw new BusinessLogicException("User cant like yourself, name: " + userTgIdWhoLikes);
         }
         User userWhoLikes = findUserByName(userTgIdWhoLikes);
         User userWhoIsLike = findUserByName(userTgIdWhoIsLike);
@@ -99,40 +93,41 @@ public class DefaultUserService implements UserService {
 
     @Override
     public List<UserView> findFavorites(Long userTgId) {
-        UserView userView = userMapper.map(findUserByName(userTgId));
-        Set<UserView> usersWhoLikes = userView.getLikes();
-        Set<UserView> usersWhoIsLike = userView.getLikeBy();
+        User user = findUserByName(userTgId);
+        Set<User> usersWhoLikes = user.getLikes();
+        Set<User> usersWhoIsLike = user.getLikeBy();
 
-        List<UserView> listFavoriteUsers = usersWhoIsLike.stream()
-                .filter(userView1 -> {
-                    if (usersWhoLikes.contains(userView1)) {
+        List<User> listFavoriteUsers = usersWhoIsLike.stream()
+                .filter(user1 -> {
+                    if (usersWhoLikes.contains(user1)) {
                         return false;
                     } else {
-                        userView1.setDescription(StaticConstant.LOVE);
+                        user1.setDescription(StaticConstant.LOVE);
                         return true;
                     }
                 }).collect(Collectors.toList());
         listFavoriteUsers.addAll(usersWhoLikes.stream()
-                .peek(userView1 -> {
-                    if (usersWhoIsLike.contains(userView1)) {
-                        userView1.setDescription(StaticConstant.MUTUAL_LOVE);
+                .peek(user1 -> {
+                    if (usersWhoIsLike.contains(user1)) {
+                        user1.setDescription(StaticConstant.MUTUAL_LOVE);
                     } else {
-                        userView1.setDescription(StaticConstant.YOU_ARE_LOVE);
+                        user1.setDescription(StaticConstant.YOU_ARE_LOVE);
                     }
                 }).collect(Collectors.toList()));
-        return listFavoriteUsers;
-
+        return listFavoriteUsers.stream()
+                .map(userMapper::map)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Page<UserView> findUsersWithPageable(Long userTgId, int offset, int size) {
+    public Page<UserView> findUsersWithPageable(Long userTgId, int page, int size) {
         User user = findUserByName(userTgId);
-        PageRequest page = PageRequest.of(offset, size);
+        PageRequest pageable = PageRequest.of(page, size);
         List<String> genders = new ArrayList<>();
         List<String> lookingFor = new ArrayList<>();
         addSearchCriteria(user, genders, lookingFor);
 
-        Page<User> userPage = userRepository.findUsers(user.getId(), genders, lookingFor, page);
+        Page<User> userPage = userRepository.findUsers(user.getId(), genders, lookingFor, pageable);
 
         List<UserView> listUserView = userPage.getContent()
                 .stream()
@@ -145,7 +140,7 @@ public class DefaultUserService implements UserService {
                     }
                 }).collect(Collectors.toList());
 
-        return PageableExecutionUtils.getPage(listUserView, page, userPage::getTotalElements);
+        return PageableExecutionUtils.getPage(listUserView, pageable, userPage::getTotalElements);
     }
 
     @Override
