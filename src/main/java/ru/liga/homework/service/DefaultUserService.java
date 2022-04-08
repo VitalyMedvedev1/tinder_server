@@ -198,6 +198,7 @@ public class DefaultUserService implements UserService {
                 break;
             case "FEMALES":
                 genders.add("FEMALE");
+                break;
             default:
                 genders.add("MALE");
                 genders.add("FEMALE");
