@@ -20,8 +20,8 @@ import ru.liga.homework.util.FileWorker;
 import ru.liga.homework.util.mapper.UserMapper;
 
 import javax.persistence.EntityNotFoundException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,7 +43,7 @@ public class DefaultUserService implements UserService {
     public UserView find(Long userTgId) {
         log.info("Find user with UserName: {}", userTgId);
 
-        UserView userView = userMapper.map(findUserByName(userTgId));
+        UserView userView = userMapper.map(findUserByTgId(userTgId));
         String fileName = userView.getFormFileName();
         if (fileName == null) {
             fileName = createFormAndSave(userView);
@@ -86,8 +86,8 @@ public class DefaultUserService implements UserService {
         if (userTgIdWhoLikes.equals(userTgIdWhoIsLike)) {
             throw new BusinessLogicException("User cant like yourself, name: " + userTgIdWhoLikes);
         }
-        User userWhoLikes = findUserByName(userTgIdWhoLikes);
-        User userWhoIsLike = findUserByName(userTgIdWhoIsLike);
+        User userWhoLikes = findUserByTgId(userTgIdWhoLikes);
+        User userWhoIsLike = findUserByTgId(userTgIdWhoIsLike);
 
         log.info("Save new record - like, user who like: {}, user who was like: {}", userWhoLikes, userWhoIsLike);
         userWhoLikes.getLikes().add(userWhoIsLike);
@@ -95,7 +95,7 @@ public class DefaultUserService implements UserService {
 
     @Override
     public List<UserView> findFavorites(Long userTgId) {
-        User user = findUserByName(userTgId);
+        User user = findUserByTgId(userTgId);
         Set<User> usersWhoLikes = user.getLikes();
         Set<User> usersWhoIsLike = user.getLikeBy();
 
@@ -123,13 +123,16 @@ public class DefaultUserService implements UserService {
 
     @Override
     public Page<UserView> findUsersWithPageable(Long userTgId, int page, int size) {
-        User user = findUserByName(userTgId);
+        User user = findUserByTgId(userTgId);
         PageRequest pageable = PageRequest.of(page, size);
         List<String> genders = new ArrayList<>();
         List<String> lookingFor = new ArrayList<>();
         addSearchCriteria(user, genders, lookingFor);
 
         Page<User> userPage = userRepository.findUsers(user.getId(), genders, lookingFor, pageable);
+        if (userPage == null) {
+            throw new BusinessLogicException(MessageFormat.format("Form for user: {0} not found", userTgId));
+        }
 
         List<UserView> listUserView = userPage.getContent()
                 .stream()
@@ -147,13 +150,13 @@ public class DefaultUserService implements UserService {
 
     @Override
     public UserView update(UserView userView) {
-        findUserByName(userView.getUsertgid());
+        findUserByTgId(userView.getUsertgid());
         log.info("Update user, UserName: {}", userView.getUsertgid());
         userRepository.save(modelMapper.map(userView, User.class));
         return userView;
     }
 
-    private User findUserByName(Long userTgId) {
+    private User findUserByTgId(Long userTgId) {
         log.info("Find user with UserName: {}", userTgId);
         return userRepository.findByUsertgid(userTgId).orElseThrow(
                 () -> {
