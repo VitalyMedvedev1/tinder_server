@@ -22,6 +22,7 @@ import ru.liga.homework.util.mapper.UserMapper;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,9 +40,14 @@ public class DefaultUserService implements UserService {
     private final FileWorker fileWorker;
 
     @Override
-    public UserView find(String userName) {
-        log.info("Find user with UserName: {}", userName);
-        UserView userView = userMapper.map(findUserByName(userName));
+    public UserView find(Long userTgId) {
+        log.info("Find user with UserName: {}", userTgId);
+        Optional<User> user = userRepository.findById(6L);
+        User user2 = findUserByName(userTgId);
+//        user.getLikes().clear();
+//        user.getLikeBy().clear();
+        UserView userView1 = modelMapper.map(user, UserView.class);
+        UserView userView = userMapper.map(findUserByName(userTgId));
         String fileName = userView.getFormFileName();
         if (fileName == null) {
             fileName = createFormAndSave(userView);
@@ -53,12 +59,12 @@ public class DefaultUserService implements UserService {
     @Override
     public UserView create(UserView userView) {
 
-        log.info("Find user with UserName: {}", userView.getUsername());
-        if (userRepository.findByUsername(userView.getUsername()).isPresent()) {
-            throw new BusinessLogicException("User with name already exist: " + userView.getUsername());
+        log.info("Find user with UserName: {}", userView.getUsertgid());
+        if (userRepository.findByUsertgid(userView.getUsertgid()).isPresent()) {
+            throw new BusinessLogicException("User with name already exist: " + userView.getUsertgid());
         }
 
-        log.info("Save user with UserName: {}", userView.getUsername());
+        log.info("Save user with UserName: {}", userView.getUsertgid());
         User user = userRepository.save(modelMapper.map(userView, User.class));
         String fileName;
         try {
@@ -67,7 +73,7 @@ public class DefaultUserService implements UserService {
             userView.setId(user.getId());
             userRepository.save(modelMapper.map(userView, User.class));
         } catch (Exception e) {
-            log.error("Error wen create user form with login {} \n Error message: {}", userView.getUsername(), e.getMessage());
+            log.error("Error wen create user form with login {} \n Error message: {}", userView.getUsertgid(), e.getMessage());
             if ((fileName = userView.getFormFileName()) != null) {
                 fileWorker.deleteFileFromDisc(fileName);
             }
@@ -80,20 +86,20 @@ public class DefaultUserService implements UserService {
 
 
     @Override
-    public void like(String userNameWhoLikes, String userNameWhoIsLike) {
-        if (userNameWhoLikes.equals(userNameWhoIsLike)) {
-            throw new BusinessLogicException("User cant like yourself, name: " + userNameWhoLikes);
+    public void like(Long userTgIdWhoLikes, Long userTgIdWhoIsLike) {
+        if (userTgIdWhoLikes.equals(userTgIdWhoIsLike)) {
+            throw new BusinessLogicException("User cant like yourself, name: " +userTgIdWhoLikes);
         }
-        User userWhoLikes = findUserByName(userNameWhoLikes);
-        User userWhoIsLike = findUserByName(userNameWhoIsLike);
+        User userWhoLikes = findUserByName(userTgIdWhoLikes);
+        User userWhoIsLike = findUserByName(userTgIdWhoIsLike);
 
         log.info("Save new record - like, user who like: {}, user who was like: {}", userWhoLikes, userWhoIsLike);
         userWhoLikes.getLikes().add(userWhoIsLike);
     }
 
     @Override
-    public List<UserView> findFavorites(String userName) {
-        UserView userView = userMapper.map(findUserByName(userName));
+    public List<UserView> findFavorites(Long userTgId) {
+        UserView userView = userMapper.map(findUserByName(userTgId));
         Set<UserView> usersWhoLikes = userView.getLikes();
         Set<UserView> usersWhoIsLike = userView.getLikeBy();
 
@@ -119,8 +125,8 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public Page<UserView> findUsersWithPageable(String userName, int offset, int size) {
-        User user = findUserByName(userName);
+    public Page<UserView> findUsersWithPageable(Long userTgId, int offset, int size) {
+        User user = findUserByName(userTgId);
         PageRequest page = PageRequest.of(offset, size);
         List<String> genders = new ArrayList<>();
         List<String> lookingFor = new ArrayList<>();
@@ -144,24 +150,24 @@ public class DefaultUserService implements UserService {
 
     @Override
     public UserView update(UserView userView) {
-        findUserByName(userView.getName());
-        log.info("Update user, UserName: {}", userView.getUsername());
+        findUserByName(userView.getUsertgid());
+        log.info("Update user, UserName: {}", userView.getUsertgid());
         userRepository.save(modelMapper.map(userView, User.class));
         return userView;
     }
 
-    private User findUserByName(String userName) {
-        log.info("Find user with UserName: {}", userName);
-        return userRepository.findByUsername(userName).orElseThrow(
+    private User findUserByName(Long userTgId) {
+        log.info("Find user with UserName: {}", userTgId);
+        return userRepository.findByUsertgid(userTgId).orElseThrow(
                 () -> {
-                    log.error("User not found with login: {}", userName);
-                    return new EntityNotFoundException("User not found with login: " + userName);
+                    log.error("User not found with login: {}", userTgId);
+                    return new EntityNotFoundException("User not found with login: " + userTgId);
                 });
     }
 
     private String createFormAndSave(UserView userView) {
         String fileName;
-        log.info("Create user form when find user but not find his form, username: {}", userView.getUsername());
+        log.info("Create user form when find user but not find his form, username: {}", userView.getUsertgid());
         fileName = createUserForm(userView);
         userView.setFormFileName(fileName);
         userRepository.save(modelMapper.map(userView, User.class));
@@ -169,19 +175,19 @@ public class DefaultUserService implements UserService {
     }
 
     private String createUserForm(UserView userView) {
-        log.info("Create form for user with UserName: {} id: {}", userView.getUsername(), userView.getId());
-        String fileName = usersFormService.createUserForm(userView.getUsername(),
+        log.info("Create form for user with UserName: {} id: {}", userView.getUsertgid(), userView.getId());
+        String fileName = usersFormService.createUserForm(userView.getUsertgid(),
                 convertTextToPreRevolution.convert(userView.getHeader()),
                 convertTextToPreRevolution.convert(userView.getDescription()));
 
-        log.info("Save form on user with formName: {} username: {}", fileName, userView.getUsername());
+        log.info("Save form on user with formName: {} username: {}", fileName, userView.getUsertgid());
         return fileName;
     }
 
     private void createBase64CodeFromUserForm(UserView userView, String fileName) {
         log.info("Code attach in Base64");
         String formBase64 = fileWorker.getUserFormInBase64Format(fileName);
-        log.info("Save attach in base64 UserName:" + userView.getUsername());
+        log.info("Save attach in base64 UserName:" + userView.getUsertgid());
         userView.setAttachBase64Code(formBase64);
     }
 

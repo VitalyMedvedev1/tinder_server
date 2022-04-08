@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long>{
-    Optional<User> findByUsername(String username);
+    Optional<User> findByUsertgid(Long usertgid);
 
     @Query(value = "SELECT " +
                             "U.* " +
@@ -20,5 +20,5 @@ public interface UserRepository extends JpaRepository<User, Long>{
                             "U.ID NOT IN (SELECT UL.USER_ID_THAT FROM OTPMM.USERS_LIKE UL WHERE UL.USER_ID_WHO = ?1) AND " +
                             "(GENDER IN ?2) AND " +
                             "(LOOKINGFOR in ?3)", nativeQuery = true)
-    Page<User> findUsers(@Param("userid") Integer userid, List<String> genders, List<String> lookingfor, PageRequest pageable);
+    Page<User> findUsers(@Param("userid") Long userid, List<String> genders, List<String> lookingfor, PageRequest pageable);
 }

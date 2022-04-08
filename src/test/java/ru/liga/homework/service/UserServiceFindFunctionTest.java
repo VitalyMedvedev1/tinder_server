@@ -29,18 +29,18 @@ class UserServiceFindFunctionTest {
     public final FileWorker fileWorker = Mockito.mock(FileWorker.class);
     public ModelMapper modelMapper = new ModelMapper();
     public final UserService userService = new DefaultUserService(userRepository, modelMapper, new UserMapper(new ModelMapper()), usersFormService, new ConvertTextToPreRevolution(), fileWorker);
-    private static final String CREATE_CLIENT_LOGIN_TEST = "CREATE_CLIENT_LOGIN_1_TEST";
+    private static final String CREATE_CLIENT_LOGIN_TEST = "CREATE_CLIENT_LOGIN_TEST";
     private static final String CREATE_CLIENT_PASSWORD_TEST = "CREATE_CLIENT_PASSWORD_TEST";
-    private static final Integer ID_FUTURE_VERSION = 10103;
+    private static final Long ID_FUTURE_VERSION = 10103L;
     private static final String TEST_FILE_NAME = "TEST_FILE_NAME";
 
     @Test
     void find() {
-        User user0 = new User(ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, "1", "1", "1", "1", "123.txt", new HashSet<>(), new HashSet<>());
+        User user0 = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, "1", "1", "1", "1", "123.txt", new HashSet<>(), new HashSet<>());
 
-        Mockito.when(fileWorker.getUserFormInBase64Format("")).thenReturn("3333");
-        Mockito.when(userRepository.findByUsername("")).thenReturn(java.util.Optional.of(user0));
-        UserView userView = userService.find("");
+        Mockito.when(fileWorker.getUserFormInBase64Format(null)).thenReturn("3333");
+        Mockito.when(userRepository.findByUsertgid(null)).thenReturn(java.util.Optional.of(user0));
+        UserView userView = userService.find(null);
         assertEquals(userView, modelMapper.map(user0, UserView.class));
     }
 }

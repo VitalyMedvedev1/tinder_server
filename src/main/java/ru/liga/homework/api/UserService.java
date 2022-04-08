@@ -6,15 +6,15 @@ import ru.liga.homework.model.User.UserView;
 import java.util.List;
 
 public interface UserService {
-    UserView find(String userName);
+    UserView find(Long userTgId);
 
     UserView create(UserView userView);
 
-    void like(String userNameWhoLikes, String userNameWhoIsLike);
+    void like(Long userTgIdWhoLikes, Long userTgIdWhoIsLike);
 
-    List<UserView> findFavorites(String userName);
+    List<UserView> findFavorites(Long userTgId);
 
-    Page<UserView> findUsersWithPageable(String userName, int offset, int size);
+    Page<UserView> findUsersWithPageable(Long userTgId, int offset, int size);
 
     UserView update(UserView userView);
 }

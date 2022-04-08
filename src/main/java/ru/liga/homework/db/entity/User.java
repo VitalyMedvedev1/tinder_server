@@ -22,10 +22,10 @@ public class User {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_s")
-    private Integer id;
+    private Long id;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "usertgid")
+    private Long usertgid;
 
     @Column(name = "name")
     private String name;
@@ -48,14 +48,12 @@ public class User {
     @Column(name = "form_file_name")
     private String formFileName;
 
-    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "users_like", schema = "otpmm",
             joinColumns = {@JoinColumn(name = "user_id_who")},
             inverseJoinColumns = {@JoinColumn(name = "user_id_that")})
     private Set<User> likes = new HashSet<>();
 
-    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "users_like", schema = "otpmm",
             joinColumns = {@JoinColumn(name = "user_id_that")},

@@ -17,15 +17,15 @@ import java.util.Date;
 @Component
 public class FileWorker {
 
-    public String saveUserFormOnDiscAndReturnPath(BufferedImage image, String userName) {
+    public String saveUserFormOnDiscAndReturnPath(BufferedImage image, Long userTgId) {
         try {
-            log.debug("Save form on disc for userName {}", userName);
+            log.debug("Save form on disc for userName {}", userTgId);
             File file = new File(StaticConstant.USER_DIR + StaticConstant.FILE_DIR + new Date().getTime() + "." + StaticConstant.FILE_EXT);
             ImageIO.write(image, StaticConstant.FILE_EXT, file);
             return file.getName();
         } catch (IOException e) {
-            log.error("Error when save form for userName {} \n {}", userName, e.getMessage());
-            throw new BusinessLogicException("Error when save form for userName " + userName + "\n" + e.getMessage());
+            log.error("Error when save form for userName {} \n {}", userTgId, e.getMessage());
+            throw new BusinessLogicException("Error when save form for userName " + userTgId + "\n" + e.getMessage());
         }
     }
 

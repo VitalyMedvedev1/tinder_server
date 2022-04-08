@@ -1,5 +1,6 @@
 package ru.liga.homework.model.User;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,8 @@ import java.util.Set;
 @AllArgsConstructor
 public class UserView {
 
-    private Integer id;
-    private String username;
+    private Long id;
+    private Long usertgid;
     private String name;
     private String password;
 
@@ -30,7 +31,9 @@ public class UserView {
     private String formFileName;
     private String attachBase64Code;
 
+    @JsonIgnore
     private Set<UserView> likes;
+    @JsonIgnore
     private Set<UserView> likeBy;
 
     private String description;

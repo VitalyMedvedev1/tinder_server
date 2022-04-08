@@ -24,8 +24,8 @@ public class UserController {
     }
 
     @GetMapping("/users/{username}")
-    public UserView findByName(@PathVariable("username") String userName) {
-        return userService.find(userName);
+    public UserView findByName(@PathVariable("username") Long userTgId) {
+        return userService.find(userTgId);
     }
 
     @PutMapping("/users")
@@ -34,20 +34,20 @@ public class UserController {
     }
 
     @GetMapping("/users/{username1}/likes/{username2}")
-    public void like(@PathVariable("username1") String userNameWhoLike,
-                     @PathVariable("username2") String userNameWhoWasLike) {
-        userService.like(userNameWhoLike, userNameWhoWasLike);
+    public void like(@PathVariable("username1") Long userTgIdWhoLike,
+                     @PathVariable("username2") Long userTgIdWhoWasLike) {
+        userService.like(userTgIdWhoLike, userTgIdWhoWasLike);
     }
 
     @GetMapping("/users/{username}/favorite")
-    public void findFavorites(@PathVariable("username") String userName) {
-        userService.findFavorites(userName);
+    public void findFavorites(@PathVariable("username") Long userTgId) {
+        userService.findFavorites(userTgId);
     }
 
     @GetMapping("/users")
-    public Page<UserView> findUsersWithPageable(@RequestParam(value = "username") String userName,
+    public Page<UserView> findUsersWithPageable(@RequestParam(value = "username") Long userTgId,
                                             @RequestParam(value = "offset") int offset,
                                             @RequestParam(value = "size") int size) {
-        return userService.findUsersWithPageable(userName, offset, size);
+        return userService.findUsersWithPageable(userTgId, offset, size);
     }
 }

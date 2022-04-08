@@ -24,15 +24,15 @@ class UserServiceLikeFunctionalTest {
 
     @Test
     void like() {
-        User user0 = new User(0, "1", "0", "1", "1", "1", "1", "1", "1", new HashSet<>(), new HashSet<>());
-        User user1 = new User(1, "1", "1", "1", "1", "1", "1", "1", "1", new HashSet<>(), new HashSet<>());
+        User user0 = new User(0L, 111L, "0", "1", "1", "1", "1", "1", "1", new HashSet<>(), new HashSet<>());
+        User user1 = new User(1L, 222L, "1", "1", "1", "1", "1", "1", "1", new HashSet<>(), new HashSet<>());
 
-        Mockito.when(userRepository.findByUsername("0")).thenReturn(java.util.Optional.of(user0));
-        Mockito.when(userRepository.findByUsername("1")).thenReturn(java.util.Optional.of(user1));
+        Mockito.when(userRepository.findByUsertgid(111L)).thenReturn(java.util.Optional.of(user0));
+        Mockito.when(userRepository.findByUsertgid(222L)).thenReturn(java.util.Optional.of(user1));
         assertEquals(0, user0.getLikes().size());
         assertEquals(0, user0.getLikeBy().size());
 
-        userService.like("0","1");
+        userService.like(111L,222L);
 
         assertEquals(1, user0.getLikes().size());
     }

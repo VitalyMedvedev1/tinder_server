@@ -17,13 +17,13 @@ class DefaultUserServiceTest {
 
     @Test
     void findUsersWithPageable() {
-        Page<UserView> userPage = userService.findUsersWithPageable("user5", 1, 1);
+        Page<UserView> userPage = userService.findUsersWithPageable(555L, 1, 1);
         assertEquals(1, userPage.getSize());
     }
 
     @Test
     void findUsersWithPageable_1() {
-        Page<UserView> userPage = userService.findUsersWithPageable("user5", 0, 4);
-        assertEquals(3, userPage.getSize());
+        Page<UserView> userPage = userService.findUsersWithPageable(555L, 0, 4);
+        assertEquals(4, userPage.getSize());
     }
 }

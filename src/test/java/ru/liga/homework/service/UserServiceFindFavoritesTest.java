@@ -28,26 +28,26 @@ class UserServiceFindFavoritesTest {
 
     @Test
     public void findFavorites() {
-        User user = new User(0, "1", "1", "1", "1", "1", "1", "1", "1", new HashSet<>(), new HashSet<>());
+        User user = new User(0L, 0L, "1", "1", "1", "1", "1", "1", "1", new HashSet<>(), new HashSet<>());
         user.getLikes().addAll(new HashSet<>
                 (Arrays.asList(
-                        new User(1, "1", "1", "1", "1", "1", "1", "", "1", new HashSet<>(), new HashSet<>()),
-                        new User(2, "2", "2", "2", "2", "2", "2", "", "2", new HashSet<>(), new HashSet<>()),
-                        new User(3, "3", "3", "3", "3", "3", "3", "", "3", new HashSet<>(), new HashSet<>()),
-                        new User(4, "4", "4", "4", "4", "4", "4", "", "4", new HashSet<>(), new HashSet<>()),
-                        new User(5, "5", "5", "5", "5", "5", "5", "", "5", new HashSet<>(), new HashSet<>())
+                        new User(1L, 1L, "1", "1", "1", "1", "1", "", "1", new HashSet<>(), new HashSet<>()),
+                        new User(2L, 2L, "2", "2", "2", "2", "2", "", "2", new HashSet<>(), new HashSet<>()),
+                        new User(3L, 3L, "3", "3", "3", "3", "3", "", "3", new HashSet<>(), new HashSet<>()),
+                        new User(4L, 4L, "4", "4", "4", "4", "4", "", "4", new HashSet<>(), new HashSet<>()),
+                        new User(5L, 5L, "5", "5", "5", "5", "5", "", "5", new HashSet<>(), new HashSet<>())
                 )));
         user.getLikeBy().addAll(new HashSet<>
                 (Arrays.asList(
-                        new User(1, "1", "1", "1", "1", "1", "1", "", "1", new HashSet<>(), new HashSet<>()),
-                        new User(7, "7", "7", "7", "7", "7", "7", "", "7", new HashSet<>(), new HashSet<>()),
-                        new User(3, "3", "3", "3", "3", "3", "3", "", "3", new HashSet<>(), new HashSet<>()),
-                        new User(4, "4", "4", "4", "4", "4", "4", "", "4", new HashSet<>(), new HashSet<>()),
-                        new User(8, "8", "8", "8", "8", "8", "8", "", "8", new HashSet<>(), new HashSet<>())
+                        new User(1L, 1L, "1", "1", "1", "1", "1", "", "1", new HashSet<>(), new HashSet<>()),
+                        new User(7L, 7L, "7", "7", "7", "7", "7", "", "7", new HashSet<>(), new HashSet<>()),
+                        new User(3L, 3L, "3", "3", "3", "3", "3", "", "3", new HashSet<>(), new HashSet<>()),
+                        new User(4L, 4L, "4", "4", "4", "4", "4", "", "4", new HashSet<>(), new HashSet<>()),
+                        new User(8L, 8L, "8", "8", "8", "8", "8", "", "8", new HashSet<>(), new HashSet<>())
                 )));
 
-        Mockito.when(userRepository.findByUsername("")).thenReturn(java.util.Optional.of(user));
-        List<UserView> listUsers = userService.findFavorites("");
+        Mockito.when(userRepository.findByUsertgid(null)).thenReturn(java.util.Optional.of(user));
+        List<UserView> listUsers = userService.findFavorites(null);
 
         assertEquals(7, listUsers.size());
         assertEquals(StaticConstant.LOVE, listUsers.stream().filter(userView -> userView.getId() == 7).map(UserView::getDescription).collect(Collectors.joining()));

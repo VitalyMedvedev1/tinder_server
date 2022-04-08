@@ -41,8 +41,8 @@ public class DefaultUsersFormService implements UsersFormService {
     private static final int LEFT_INDENT = 15;
 
     @Override
-    public String createUserForm(String userName, String header, String description) {
-        log.debug("Start create form for userName {}", userName);
+    public String createUserForm(Long userTgId, String header, String description) {
+        log.debug("Start create form for userName {}", userTgId);
         try (InputStream inputStream = new ClassPathResource(BACKGROUND_FILE_NAME).getInputStream()) {
             BufferedImage image = ImageIO.read(inputStream);
             header = header + ",";
@@ -80,12 +80,12 @@ public class DefaultUsersFormService implements UsersFormService {
                 line.draw(g2, (float) LEFT_INDENT, y + line.getAscent());
                 y += line.getAscent() + line.getDescent() + line.getLeading();
             }
-            String fileName = fileWorker.saveUserFormOnDiscAndReturnPath(image, userName);
+            String fileName = fileWorker.saveUserFormOnDiscAndReturnPath(image, userTgId);
             image.flush();
             return fileName;
         } catch (IOException e) {
-            log.error("Error when create form for userName {} \n {}", userName, e.getMessage());
-            throw new BusinessLogicException("Error when create form for userName " + userName + "\n" + e.getMessage());
+            log.error("Error when create form for userName {} \n {}", userTgId, e.getMessage());
+            throw new BusinessLogicException("Error when create form for userName " + userTgId + "\n" + e.getMessage());
         }
     }
 
