@@ -33,7 +33,7 @@ public class UserController {
         return userService.update(userView);
     }
 
-    @GetMapping("/users/{username1}/likes/{username2}")
+    @PostMapping("/users/{username1}/likes/{username2}")
     public void like(@PathVariable("username1") Long userTgIdWhoLike,
                      @PathVariable("username2") Long userTgIdWhoWasLike) {
         userService.like(userTgIdWhoLike, userTgIdWhoWasLike);
