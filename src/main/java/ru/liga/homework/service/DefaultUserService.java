@@ -21,6 +21,7 @@ import ru.liga.homework.util.mapper.UserMapper;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,6 +42,7 @@ public class DefaultUserService implements UserService {
     @Override
     public UserView find(Long userTgId) {
         log.info("Find user with UserName: {}", userTgId);
+
         UserView userView = userMapper.map(findUserByName(userTgId));
         String fileName = userView.getFormFileName();
         if (fileName == null) {

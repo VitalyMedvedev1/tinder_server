@@ -39,8 +39,12 @@ class UserServiceFindFunctionTest {
         User user0 = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, "1", "1", "1", "1", "123.txt", new HashSet<>(), new HashSet<>());
 
         Mockito.when(fileWorker.getUserFormInBase64Format(null)).thenReturn("3333");
-        Mockito.when(userRepository.findByUsertgid(null)).thenReturn(java.util.Optional.of(user0));
-        UserView userView = userService.find(null);
-        assertEquals(userView, modelMapper.map(user0, UserView.class));
+        Mockito.when(userRepository.findByUsertgid(ID_FUTURE_VERSION)).thenReturn(java.util.Optional.of(user0));
+        UserView userView = userService.find(ID_FUTURE_VERSION);
+
+        assertEquals(userView.getId(), user0.getId());
+        assertEquals(userView.getUsertgid(), user0.getUsertgid());
+        assertEquals(userView.getName(), user0.getName());
+        assertEquals(userView.getPassword(), user0.getPassword());
     }
 }
