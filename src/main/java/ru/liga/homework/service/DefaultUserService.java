@@ -99,29 +99,26 @@ public class DefaultUserService implements UserService {
         Set<User> usersWhoLikes = user.getLikes();
         Set<User> usersWhoIsLike = user.getLikeBy();
 
-        List<UserView> userViewList = new ArrayList<>();
-
         List<UserView> userViewList = usersWhoIsLike.stream()
-                .filter(user1 -> {
-                    if (usersWhoLikes.contains(user1)) {
-                        return false;
-                    } else {
-                        userMapper.map(u)
-                        user1.setDescription(StaticConstant.LOVE);
-                        return true;
-                    }
+                .filter(user1 -> !usersWhoLikes.contains(user1))
+                .map(user1 -> {
+                    UserView userView = userMapper.map(user1);
+                    userView.setLoveSign(StaticConstant.LOVE);
+                    return userView;
                 }).collect(Collectors.toList());
-        listFavoriteUsers.addAll(usersWhoLikes.stream()
-                .peek(user1 -> {
-                    if (usersWhoIsLike.contains(user1)) {
-                        user1.setDescription(StaticConstant.MUTUAL_LOVE);
-                    } else {
-                        user1.setDescription(StaticConstant.YOU_ARE_LOVE);
-                    }
-                }).collect(Collectors.toList()));
-        return listFavoriteUsers.stream()
-                .map(userMapper::map)
-                .collect(Collectors.toList());
+        userViewList.addAll(
+                usersWhoLikes.stream()
+                        .map(user1 -> {
+                            UserView userView = userMapper.map(user1);
+                            if (usersWhoIsLike.contains(user1)) {
+                                userView.setLoveSign(StaticConstant.MUTUAL_LOVE);
+                            } else {
+                                userView.setLoveSign(StaticConstant.YOU_ARE_LOVE);
+                            }
+                            return userView;
+                        }).collect(Collectors.toList())
+        );
+        return userViewList;
     }
 
     @Override
@@ -155,9 +152,9 @@ public class DefaultUserService implements UserService {
     public UserView update(UserView userView) {
         log.info("Update user, UserName: {}", userView.getUsertgid());
         User user = findUserByTgId(userView.getUsertgid());
+        String fileName = user.getFormFileName();
         if (!userView.getHeader().equals(user.getHeader()) || !userView.getDescription().equals(user.getDescription())) {
-            fileWorker.deleteFileFromDisc(user.getFormFileName());
-            String fileName;
+            fileWorker.deleteFileFromDisc(fileName);
             try {
                 fileName = createUserForm(userView);
                 userView.setFormFileName(fileName);
@@ -170,7 +167,9 @@ public class DefaultUserService implements UserService {
                 throw new BusinessLogicException("Error create new user: " + e.getMessage());
             }
         }
+        userView.setId(user.getId());
         userRepository.save(modelMapper.map(userView, User.class));
+        createBase64CodeFromUserForm(userView, fileName);
         return userView;
     }
 

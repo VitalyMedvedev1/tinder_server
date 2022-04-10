@@ -2,9 +2,7 @@ package ru.liga.homework.db.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -13,8 +11,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users", schema = "otpmm")
-//@Getter
-//@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @SequenceGenerator(name = "users_s", schema = "otpmm", sequenceName = "users_s", allocationSize = 1)

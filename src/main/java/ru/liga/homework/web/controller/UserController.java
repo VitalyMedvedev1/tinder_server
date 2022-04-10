@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{username}")
-    public UserView findByName(@PathVariable("username") Long userTgId) {
+    public UserView find(@PathVariable("username") Long userTgId) {
         return userService.find(userTgId);
     }
 

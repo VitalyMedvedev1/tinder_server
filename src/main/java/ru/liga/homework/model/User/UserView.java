@@ -1,14 +1,15 @@
 package ru.liga.homework.model.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
-import ru.liga.homework.db.entity.User;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.liga.homework.type.Gender;
 import ru.liga.homework.type.LookingFor;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.util.Objects;
 import java.util.Set;
 
 @Setter
@@ -39,5 +40,5 @@ public class UserView {
 
     private String description;
 
-    private String LoveSign;
+    private String loveSign;
 }
