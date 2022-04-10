@@ -19,14 +19,6 @@ public class UserMapper {
                 .setCollectionsMergeEnabled(false)
                 .setFieldMatchingEnabled(true)
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
-/*        PropertyMap<UserView, User> skip = new PropertyMap<>() {
-            @Override
-            protected void configure() {
-                skip().setLikes(null);
-                skip().setLikeBy(null);
-            }
-        };
-        modelMapper.addMappings(skip);*/
         return modelMapper.map(user, UserView.class);
     }
 }
