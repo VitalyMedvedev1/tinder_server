@@ -20,7 +20,7 @@ public class FileWorker {
     public String saveUserFormOnDiscAndReturnPath(BufferedImage image, Long userTgId) {
         try {
             log.debug("Save form on disc for userName {}", userTgId);
-            File file = new File(StaticConstant.USER_DIR + StaticConstant.FILE_DIR + new Date().getTime() + "." + StaticConstant.FILE_EXT);
+            File file = new File(StaticConstant.USER_DIR + StaticConstant.FILE_DIR + new Date().getTime() + "_" + userTgId + "." + StaticConstant.FILE_EXT);
             ImageIO.write(image, StaticConstant.FILE_EXT, file);
             return file.getName();
         } catch (IOException e) {
@@ -42,6 +42,7 @@ public class FileWorker {
 
     public void deleteFileFromDisc(String fileName) {
         try {
+            log.debug("Delete form file with name: {}", fileName);
             boolean delete = new File(StaticConstant.USER_DIR + StaticConstant.FILE_DIR + fileName).delete();
             if (!delete){
                 throw new BusinessLogicException("Error delete file" + StaticConstant.USER_DIR + StaticConstant.FILE_DIR + fileName);

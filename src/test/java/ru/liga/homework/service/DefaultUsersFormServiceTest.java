@@ -8,7 +8,6 @@ import ru.liga.homework.api.UsersFormService;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,13 +17,14 @@ class DefaultUsersFormServiceTest {
 
     private static final String FILE_DIR = "/forms/";
     private static final String USER_DIR = System.getProperty("user.dir");
+    private static final Long USER_TG_ID = 99999L;
 
     @Autowired
     private UsersFormService usersFormService;
 
     @Test
     void createEmptyUserForm() {
-        String pathForm = usersFormService.createUserForm(99999L + LocalDate.now().toEpochDay(), "", "");
+        String pathForm = usersFormService.createUserForm(99999L, "", "");
         try (FileInputStream fileInputStream = new FileInputStream(USER_DIR + FILE_DIR + pathForm)) {
             assertNotNull(fileInputStream);
         } catch (IOException e) {
@@ -39,7 +39,7 @@ class DefaultUsersFormServiceTest {
 
     @Test
     void createUserForm() {
-        String pathForm = usersFormService.createUserForm(99999L + LocalDate.now().toEpochDay(), "HEADER", "The following examples show how to use java.awt.image.BufferedImage#flush() ." +
+        String pathForm = usersFormService.createUserForm(USER_TG_ID, "HEADER", "The following examples show how to use java.awt.image.BufferedImage#flush() ." +
                 " These examples are extracted from open source projects. " +
                 "You can vote up the ones you like or vote down the ones you don't like, " +
                 "and go to the original project or source file by following the links above each example. " +

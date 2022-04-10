@@ -99,11 +99,14 @@ public class DefaultUserService implements UserService {
         Set<User> usersWhoLikes = user.getLikes();
         Set<User> usersWhoIsLike = user.getLikeBy();
 
-        List<User> listFavoriteUsers = usersWhoIsLike.stream()
+        List<UserView> userViewList = new ArrayList<>();
+
+        List<UserView> userViewList = usersWhoIsLike.stream()
                 .filter(user1 -> {
                     if (usersWhoLikes.contains(user1)) {
                         return false;
                     } else {
+                        userMapper.map(u)
                         user1.setDescription(StaticConstant.LOVE);
                         return true;
                     }
@@ -150,8 +153,23 @@ public class DefaultUserService implements UserService {
 
     @Override
     public UserView update(UserView userView) {
-        findUserByTgId(userView.getUsertgid());
         log.info("Update user, UserName: {}", userView.getUsertgid());
+        User user = findUserByTgId(userView.getUsertgid());
+        if (!userView.getHeader().equals(user.getHeader()) || !userView.getDescription().equals(user.getDescription())) {
+            fileWorker.deleteFileFromDisc(user.getFormFileName());
+            String fileName;
+            try {
+                fileName = createUserForm(userView);
+                userView.setFormFileName(fileName);
+                userView.setId(user.getId());
+            } catch (Exception e) {
+                log.error("Error wen create user form with login {} \n Error message: {}", userView.getUsertgid(), e.getMessage());
+                if ((fileName = userView.getFormFileName()) != null) {
+                    fileWorker.deleteFileFromDisc(fileName);
+                }
+                throw new BusinessLogicException("Error create new user: " + e.getMessage());
+            }
+        }
         userRepository.save(modelMapper.map(userView, User.class));
         return userView;
     }
@@ -176,9 +194,11 @@ public class DefaultUserService implements UserService {
 
     private String createUserForm(UserView userView) {
         log.info("Create form for user with UserName: {} id: {}", userView.getUsertgid(), userView.getId());
+        String preRevolutionHeader = convertTextToPreRevolution.convert(userView.getHeader());
+        String preRevolutionDesc = convertTextToPreRevolution.convert(userView.getDescription());
         String fileName = usersFormService.createUserForm(userView.getUsertgid(),
-                convertTextToPreRevolution.convert(userView.getHeader()),
-                convertTextToPreRevolution.convert(userView.getDescription()));
+                preRevolutionHeader,
+                preRevolutionDesc);
 
         log.info("Save form on user with formName: {} username: {}", fileName, userView.getUsertgid());
         return fileName;

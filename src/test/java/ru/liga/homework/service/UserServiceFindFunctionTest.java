@@ -24,11 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(MockitoExtension.class)
 class UserServiceFindFunctionTest {
 
-    public final UserRepository userRepository = Mockito.mock(UserRepository.class);
+    private final UserRepository userRepository = Mockito.mock(UserRepository.class);
     private final UsersFormService usersFormService = Mockito.mock(UsersFormService.class);
-    public final FileWorker fileWorker = Mockito.mock(FileWorker.class);
-    public ModelMapper modelMapper = new ModelMapper();
-    public final UserService userService = new DefaultUserService(userRepository, modelMapper, new UserMapper(new ModelMapper()), usersFormService, new ConvertTextToPreRevolution(), fileWorker);
+    private final FileWorker fileWorker = Mockito.mock(FileWorker.class);
+    private ModelMapper modelMapper = new ModelMapper();
+    private final UserService userService = new DefaultUserService(userRepository, modelMapper, new UserMapper(new ModelMapper()), usersFormService, new ConvertTextToPreRevolution(), fileWorker);
     private static final String CREATE_CLIENT_LOGIN_TEST = "CREATE_CLIENT_LOGIN_TEST";
     private static final String CREATE_CLIENT_PASSWORD_TEST = "CREATE_CLIENT_PASSWORD_TEST";
     private static final Long ID_FUTURE_VERSION = 10103L;

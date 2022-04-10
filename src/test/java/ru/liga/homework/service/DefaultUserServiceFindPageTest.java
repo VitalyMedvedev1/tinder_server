@@ -36,7 +36,8 @@ class DefaultUserServiceFindPageTest {
         List<User> list = new ArrayList<>(Arrays.asList(
                 new User(1L, 1L, "1", "1", "1", "1", "1", "", "1", new HashSet<>(), new HashSet<>()),
                 new User(2L, 2L, "2", "2", "2", "2", "2", "", "1", new HashSet<>(), new HashSet<>()),
-                new User(1L, 1L, "1", "1", "1", "1", "1", "", "1", new HashSet<>(), new HashSet<>())));
+                new User(3L, 1L, "1", "1", "1", "1", "1", "", "1", new HashSet<>(), new HashSet<>()),
+                new User(4L, 1L, "1", "1", "1", "1", "1", "", "1", new HashSet<>(), new HashSet<>())));
 
         PageRequest pageable = PageRequest.of(1, 1);
         Page<User> userPage = new PageImpl<>(list, pageable, list.size());

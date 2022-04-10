@@ -38,4 +38,6 @@ public class UserView {
     private Set<UserView> likeBy;
 
     private String description;
+
+    private String LoveSign;
 }
