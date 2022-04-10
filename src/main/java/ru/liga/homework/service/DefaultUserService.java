@@ -45,7 +45,7 @@ public class DefaultUserService implements UserService {
 
         UserView userView = userMapper.map(findUserByTgId(userTgId));
         String fileName = userView.getFormFileName();
-        if (fileName == null) {
+        if (fileName == null || fileName.equals("")) {
             fileName = createFormAndSave(userView);
         }
         createBase64CodeFromUserForm(userView, fileName);
@@ -168,7 +168,11 @@ public class DefaultUserService implements UserService {
             }
         }
         userView.setId(user.getId());
-        userRepository.save(modelMapper.map(userView, User.class));
+        userView.setFormFileName(fileName);
+        User userNewData = modelMapper.map(userView, User.class);
+        userNewData.getLikes().addAll(user.getLikes());
+        userNewData.getLikeBy().addAll(user.getLikeBy());
+        userRepository.save(userNewData);
         createBase64CodeFromUserForm(userView, fileName);
         return userView;
     }

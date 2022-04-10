@@ -37,7 +37,7 @@ class DefaultUserServiceUpdateUserTest {
 
     @Test
     void updateWith_NOT_CreatedNewForm() {
-        UserView userView = new UserView(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LookingFor.ALL, "TEST_FILE_999.txt", "1", new HashSet<>(), new HashSet<>(), "DESCRIPTION","");
+        UserView userView = new UserView(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LookingFor.ALL, "TEST_FILE_999.txt", "1", "DESCRIPTION","");
         User user = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, "1", "HEADER1", "1", "DESCRIPTION", "1", new HashSet<>(), new HashSet<>());
         Mockito.when(userRepository.findByUsertgid(ID_FUTURE_VERSION)).thenReturn(java.util.Optional.of(user));
         User user1 = modelMapper.map(userView, User.class);
@@ -49,7 +49,7 @@ class DefaultUserServiceUpdateUserTest {
 
     @Test
     void updateWithCreatedNewForm() {
-        UserView userView = new UserView(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LookingFor.ALL, "TEST_FILE_999.txt", "1", new HashSet<>(), new HashSet<>(), "DESCRIPTION","");
+        UserView userView = new UserView(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LookingFor.ALL, "TEST_FILE_999.txt", "1", "DESCRIPTION","");
         User user = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, "1", "HEADER", "1", "DESCRIPTION", "1", new HashSet<>(), new HashSet<>());
         Mockito.when(userRepository.findByUsertgid(ID_FUTURE_VERSION)).thenReturn(java.util.Optional.of(user));
         User user1 = modelMapper.map(userView, User.class);

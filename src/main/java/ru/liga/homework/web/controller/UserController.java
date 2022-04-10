@@ -9,6 +9,8 @@ import ru.liga.homework.api.UserService;
 import ru.liga.homework.db.entity.User;
 import ru.liga.homework.model.User.UserView;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1")
@@ -40,8 +42,8 @@ public class UserController {
     }
 
     @GetMapping("/users/{username}/favorite")
-    public void findFavorites(@PathVariable("username") Long userTgId) {
-        userService.findFavorites(userTgId);
+    public List<UserView> findFavorites(@PathVariable("username") Long userTgId) {
+        return userService.findFavorites(userTgId);
     }
 
     @GetMapping("/users")

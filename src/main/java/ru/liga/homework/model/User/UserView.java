@@ -25,20 +25,18 @@ public class UserView {
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
-
     private String header;
+    private String description;
 
     @Enumerated(EnumType.STRING)
     private LookingFor lookingFor;
     private String formFileName;
     private String attachBase64Code;
 
-    @JsonIgnore
-    private Set<UserView> likes;
-    @JsonIgnore
-    private Set<UserView> likeBy;
-
-    private String description;
+//    @JsonIgnore
+//    private Set<UserView> likes;
+//    @JsonIgnore
+//    private Set<UserView> likeBy;
 
     private String loveSign;
 }
