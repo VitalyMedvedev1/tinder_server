@@ -103,7 +103,7 @@ public class DefaultUserService implements UserService {
                 .filter(user1 -> !usersWhoLikes.contains(user1))
                 .map(user1 -> {
                     UserView userView = userMapper.map(user1);
-                    userView.setLoveSign(StaticConstant.LOVE);
+                    userView.setLoveSign(StaticConstant.YOU_ARE_LOVE);
                     return userView;
                 }).collect(Collectors.toList());
         userViewList.addAll(
@@ -113,7 +113,7 @@ public class DefaultUserService implements UserService {
                             if (usersWhoIsLike.contains(user1)) {
                                 userView.setLoveSign(StaticConstant.MUTUAL_LOVE);
                             } else {
-                                userView.setLoveSign(StaticConstant.YOU_ARE_LOVE);
+                                userView.setLoveSign(StaticConstant.LOVE);
                             }
                             return userView;
                         }).collect(Collectors.toList())

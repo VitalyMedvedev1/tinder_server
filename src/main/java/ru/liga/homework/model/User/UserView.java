@@ -26,7 +26,7 @@ public class UserView {
     @Enumerated(EnumType.STRING)
     private Gender gender;
     private String header;
-    private String description;
+
 
     @Enumerated(EnumType.STRING)
     private LookingFor lookingFor;
@@ -38,5 +38,6 @@ public class UserView {
 //    @JsonIgnore
 //    private Set<UserView> likeBy;
 
+    private String description;
     private String loveSign;
 }

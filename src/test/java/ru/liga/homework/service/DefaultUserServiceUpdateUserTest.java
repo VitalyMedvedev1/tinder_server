@@ -44,7 +44,7 @@ class DefaultUserServiceUpdateUserTest {
         Mockito.when(userRepository.save(modelMapper.map(userView, User.class))).thenReturn(user);
         UserView userViewNew = userService.update(userView);
 
-        Mockito.verify(usersFormService, Mockito.times(1)).createUserForm(ID_FUTURE_VERSION, "1", "Description");
+        Mockito.verify(usersFormService, Mockito.times(1)).createUserForm(ID_FUTURE_VERSION, "1", "DESCRIPTION");
     }
 
     @Test
@@ -56,6 +56,6 @@ class DefaultUserServiceUpdateUserTest {
         Mockito.when(userRepository.save(modelMapper.map(userView, User.class))).thenReturn(user);
         UserView userViewNew = userService.update(userView);
 
-        Mockito.verify(usersFormService, Mockito.times(1)).createUserForm(ID_FUTURE_VERSION, "1", "Description");
+        Mockito.verify(usersFormService, Mockito.times(1)).createUserForm(ID_FUTURE_VERSION, "1", "DESCRIPTION");
     }
 }

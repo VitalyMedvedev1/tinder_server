@@ -51,9 +51,9 @@ class UserServiceFindFavoritesTest {
         List<UserView> listUsers = userService.findFavorites(null);
 
         assertEquals(7, listUsers.size());
-        assertEquals(StaticConstant.LOVE, listUsers.stream().filter(userView -> userView.getId() == 7).map(UserView::getLoveSign).collect(Collectors.joining()));
+        assertEquals(StaticConstant.YOU_ARE_LOVE, listUsers.stream().filter(userView -> userView.getId() == 7).map(UserView::getLoveSign).collect(Collectors.joining()));
         assertEquals(StaticConstant.MUTUAL_LOVE, listUsers.stream().filter(userView -> userView.getId() == 1).map(UserView::getLoveSign).collect(Collectors.joining()));
-        assertEquals(StaticConstant.YOU_ARE_LOVE, listUsers.stream().filter(userView -> userView.getId() == 5).map(UserView::getLoveSign).collect(Collectors.joining()));
+        assertEquals(StaticConstant.LOVE, listUsers.stream().filter(userView -> userView.getId() == 5).map(UserView::getLoveSign).collect(Collectors.joining()));
     }
     @Test
     public void findFavorites_LOVE() {
@@ -67,7 +67,7 @@ class UserServiceFindFavoritesTest {
         List<UserView> listUsers = userService.findFavorites(null);
 
         assertEquals(1, listUsers.size());
-        assertEquals(StaticConstant.LOVE, listUsers.stream().limit(1).map(UserView::getLoveSign).collect(Collectors.joining()));
+        assertEquals(StaticConstant.YOU_ARE_LOVE, listUsers.stream().limit(1).map(UserView::getLoveSign).collect(Collectors.joining()));
     }
 
     @Test
@@ -82,7 +82,7 @@ class UserServiceFindFavoritesTest {
         List<UserView> listUsers = userService.findFavorites(null);
 
         assertEquals(1, listUsers.size());
-        assertEquals(StaticConstant.YOU_ARE_LOVE, listUsers.stream().limit(1).map(UserView::getLoveSign).collect(Collectors.joining()));
+        assertEquals(StaticConstant.LOVE, listUsers.stream().limit(1).map(UserView::getLoveSign).collect(Collectors.joining()));
     }
 
     @Test

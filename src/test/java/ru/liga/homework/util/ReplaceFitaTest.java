@@ -17,13 +17,19 @@ class ReplaceFitaTest {
 
     @Test
     void replaceFITAinUserName_1() {
-        String repName = convertTextToPreRevolution.replaceFITAinUserName("ФОМА");
+        String repName = convertTextToPreRevolution.replaceFITAinUserName("Фома фома гггг фома");
         assertTrue(repName.contains(String.valueOf(FITA)));
     }
 
     @Test
     void notReplaceFITAinUserName_1() {
         String repName = convertTextToPreRevolution.replaceFITAinUserName("ФЕНОКЕНТИЙ");
+        assertFalse(repName.contains(String.valueOf(FITA)));
+    }
+
+    @Test
+    void notReplaceFITAinUserName_2() {
+        String repName = convertTextToPreRevolution.replaceFITAinUserName("Обьездил весь свет");
         assertFalse(repName.contains(String.valueOf(FITA)));
     }
 }
