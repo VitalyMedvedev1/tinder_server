@@ -1,5 +1,6 @@
-package ru.liga.homework.service;
+package ru.liga.homework.service.impl;
 
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -8,12 +9,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.liga.homework.api.UserService;
-import ru.liga.homework.api.UsersFormService;
+import ru.liga.homework.util.form.UsersForm;
 import ru.liga.homework.db.entity.User;
 import ru.liga.homework.db.repository.UserRepository;
 import ru.liga.homework.exception.BusinessLogicException;
-import ru.liga.homework.model.User.UserView;
+import ru.liga.homework.model.UserDto;
+import ru.liga.homework.service.UserService;
 import ru.liga.homework.type.StaticConstant;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.FileWorker;
@@ -30,54 +31,54 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class DefaultUserService implements UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final UserMapper userMapper;
-    private final UsersFormService usersFormService;
+    private final UsersForm usersForm;
     private final ConvertTextToPreRevolution convertTextToPreRevolution;
     private final FileWorker fileWorker;
 
     @Override
-    public UserView find(Long userTgId) {
+    public UserDto find(Long userTgId) {
         log.info("Find user with UserName: {}", userTgId);
 
-        UserView userView = userMapper.map(findUserByTgId(userTgId));
-        String fileName = userView.getFormFileName();
-        if (fileName == null || fileName.equals("")) {
-            fileName = createFormAndSave(userView);
+        UserDto userDto = userMapper.map(findUserByTgId(userTgId));
+        String fileName = userDto.getFormFileName();
+        if (StringUtils.isEmpty(fileName)) {
+            fileName = createFormAndSave(userDto);
         }
-        createBase64CodeFromUserForm(userView, fileName);
-        return userView;
+        createBase64CodeFromUserForm(userDto, fileName);
+        return userDto;
     }
 
     @Override
-    public UserView create(UserView userView) {
+    public UserDto create(UserDto userDto) {
 
-        log.info("Find user with UserName: {}", userView.getUsertgid());
-        if (userRepository.findByUsertgid(userView.getUsertgid()).isPresent()) {
-            throw new BusinessLogicException("User with name already exist: " + userView.getUsertgid());
+        log.info("Find user with UserName: {}", userDto.getUsertgid());
+        if (userRepository.findByUsertgid(userDto.getUsertgid()).isPresent()) {
+            throw new BusinessLogicException("User with name already exist: " + userDto.getUsertgid());
         }
 
-        log.info("Save user with UserName: {}", userView.getUsertgid());
-        User user = userRepository.save(modelMapper.map(userView, User.class));
+        log.info("Save user with UserName: {}", userDto.getUsertgid());
+        User user = userRepository.save(modelMapper.map(userDto, User.class));
         String fileName;
         try {
-            fileName = createUserForm(userView);
-            userView.setFormFileName(fileName);
-            userView.setId(user.getId());
-            userRepository.save(modelMapper.map(userView, User.class));
+            fileName = createUserForm(userDto);
+            userDto.setFormFileName(fileName);
+            userDto.setId(user.getId());
+            userRepository.save(modelMapper.map(userDto, User.class));
         } catch (Exception e) {
-            log.error("Error wen create user form with login {} \n Error message: {}", userView.getUsertgid(), e.getMessage());
-            if ((fileName = userView.getFormFileName()) != null) {
+            log.error("Error wen create user form with login {} \n Error message: {}", userDto.getUsertgid(), e.getMessage());
+            if ((fileName = userDto.getFormFileName()) != null) {
                 fileWorker.deleteFileFromDisc(fileName);
             }
             throw new BusinessLogicException("Error create new user: " + e.getMessage());
         }
 
-        createBase64CodeFromUserForm(userView, fileName);
-        return userView;
+        createBase64CodeFromUserForm(userDto, fileName);
+        return userDto;
     }
 
 
@@ -94,35 +95,35 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public List<UserView> findFavorites(Long userTgId) {
+    public List<UserDto> findFavorites(Long userTgId) {
         User user = findUserByTgId(userTgId);
         Set<User> usersWhoLikes = user.getLikes();
         Set<User> usersWhoIsLike = user.getLikeBy();
 
-        List<UserView> userViewList = usersWhoIsLike.stream()
+        List<UserDto> userDtoList = usersWhoIsLike.stream()
                 .filter(user1 -> !usersWhoLikes.contains(user1))
                 .map(user1 -> {
-                    UserView userView = userMapper.map(user1);
-                    userView.setLoveSign(StaticConstant.YOU_ARE_LOVE);
-                    return userView;
+                    UserDto userDto = userMapper.map(user1);
+                    userDto.setLoveSign(StaticConstant.YOU_ARE_LOVE);
+                    return userDto;
                 }).collect(Collectors.toList());
-        userViewList.addAll(
+        userDtoList.addAll(
                 usersWhoLikes.stream()
                         .map(user1 -> {
-                            UserView userView = userMapper.map(user1);
+                            UserDto userDto = userMapper.map(user1);
                             if (usersWhoIsLike.contains(user1)) {
-                                userView.setLoveSign(StaticConstant.MUTUAL_LOVE);
+                                userDto.setLoveSign(StaticConstant.MUTUAL_LOVE);
                             } else {
-                                userView.setLoveSign(StaticConstant.LOVE);
+                                userDto.setLoveSign(StaticConstant.LOVE);
                             }
-                            return userView;
+                            return userDto;
                         }).collect(Collectors.toList())
         );
-        return userViewList;
+        return userDtoList;
     }
 
     @Override
-    public Page<UserView> findUsersWithPageable(Long userTgId, int page, int size) {
+    public Page<UserDto> findUsersWithPageable(Long userTgId, int page, int size) {
         User user = findUserByTgId(userTgId);
         PageRequest pageable = PageRequest.of(page, size);
         List<String> genders = new ArrayList<>();
@@ -134,9 +135,9 @@ public class DefaultUserService implements UserService {
             throw new BusinessLogicException(MessageFormat.format("Form for user: {0} not found", userTgId));
         }
 
-        List<UserView> listUserView = userPage.getContent()
+        List<UserDto> listUserDto = userPage.getContent()
                 .stream()
-                .map(user1 -> modelMapper.map(user1, UserView.class)).peek(userView1 -> {
+                .map(user1 -> modelMapper.map(user1, UserDto.class)).peek(userView1 -> {
                     String fileName = userView1.getFormFileName();
                     if (fileName == null) {
                         createBase64CodeFromUserForm(userView1, createFormAndSave(userView1));
@@ -145,73 +146,74 @@ public class DefaultUserService implements UserService {
                     }
                 }).collect(Collectors.toList());
 
-        return PageableExecutionUtils.getPage(listUserView, pageable, userPage::getTotalElements);
+        return PageableExecutionUtils.getPage(listUserDto, pageable, userPage::getTotalElements);
     }
 
     @Override
-    public UserView update(UserView userView) {
-        log.info("Update user, UserName: {}", userView.getUsertgid());
-        User user = findUserByTgId(userView.getUsertgid());
+    public UserDto update(UserDto userDto) {
+        log.info("Update user, UserName: {}", userDto.getUsertgid());
+        User user = findUserByTgId(userDto.getUsertgid());
         String fileName = user.getFormFileName();
-        if (!userView.getHeader().equals(user.getHeader()) || !userView.getDescription().equals(user.getDescription())) {
+        if (!userDto.getHeader().equals(user.getHeader()) || !userDto.getDescription().equals(user.getDescription())) {
             fileWorker.deleteFileFromDisc(fileName);
             try {
-                fileName = createUserForm(userView);
-                userView.setFormFileName(fileName);
-                userView.setId(user.getId());
+                fileName = createUserForm(userDto);
+                userDto.setFormFileName(fileName);
+                userDto.setId(user.getId());
             } catch (Exception e) {
-                log.error("Error wen create user form with login {} \n Error message: {}", userView.getUsertgid(), e.getMessage());
-                if ((fileName = userView.getFormFileName()) != null) {
+                log.error("Error wen create user form with login {} \n Error message: {}", userDto.getUsertgid(), e.getMessage());
+                if ((fileName = userDto.getFormFileName()) != null) {
                     fileWorker.deleteFileFromDisc(fileName);
                 }
                 throw new BusinessLogicException("Error create new user: " + e.getMessage());
             }
         }
-        userView.setId(user.getId());
-        userView.setFormFileName(fileName);
-        User userNewData = modelMapper.map(userView, User.class);
+        userDto.setId(user.getId());
+        userDto.setFormFileName(fileName);
+        User userNewData = modelMapper.map(userDto, User.class);
         userNewData.getLikes().addAll(user.getLikes());
         userNewData.getLikeBy().addAll(user.getLikeBy());
         userRepository.save(userNewData);
-        createBase64CodeFromUserForm(userView, fileName);
-        return userView;
+        createBase64CodeFromUserForm(userDto, fileName);
+        return userDto;
     }
 
     private User findUserByTgId(Long userTgId) {
         log.info("Find user with UserName: {}", userTgId);
-        return userRepository.findByUsertgid(userTgId).orElseThrow(
-                () -> {
-                    log.error("User not found with login: {}", userTgId);
-                    return new EntityNotFoundException("User not found with login: " + userTgId);
-                });
+        return userRepository.findByUsertgid(userTgId).
+                orElseThrow(
+                        () -> {
+                            log.error("User not found with login: {}", userTgId);
+                            return new EntityNotFoundException("User not found with login: " + userTgId);
+                        });
     }
 
-    private String createFormAndSave(UserView userView) {
+    private String createFormAndSave(UserDto userDto) {
         String fileName;
-        log.info("Create user form when find user but not find his form, username: {}", userView.getUsertgid());
-        fileName = createUserForm(userView);
-        userView.setFormFileName(fileName);
-        userRepository.save(modelMapper.map(userView, User.class));
+        log.info("Create user form when find user but not find his form, username: {}", userDto.getUsertgid());
+        fileName = createUserForm(userDto);
+        userDto.setFormFileName(fileName);
+        userRepository.save(modelMapper.map(userDto, User.class));
         return fileName;
     }
 
-    private String createUserForm(UserView userView) {
-        log.info("Create form for user with UserName: {} id: {}", userView.getUsertgid(), userView.getId());
-        String preRevolutionHeader = convertTextToPreRevolution.convert(userView.getHeader());
-        String preRevolutionDesc = convertTextToPreRevolution.convert(userView.getDescription());
-        String fileName = usersFormService.createUserForm(userView.getUsertgid(),
+    private String createUserForm(UserDto userDto) {
+        log.info("Create form for user with UserName: {} id: {}", userDto.getUsertgid(), userDto.getId());
+        String preRevolutionHeader = convertTextToPreRevolution.convert(userDto.getHeader());
+        String preRevolutionDesc = convertTextToPreRevolution.convert(userDto.getDescription());
+        String fileName = usersForm.createUserForm(userDto.getUsertgid(),
                 preRevolutionHeader,
                 preRevolutionDesc);
 
-        log.info("Save form on user with formName: {} username: {}", fileName, userView.getUsertgid());
+        log.info("Save form on user with formName: {} username: {}", fileName, userDto.getUsertgid());
         return fileName;
     }
 
-    private void createBase64CodeFromUserForm(UserView userView, String fileName) {
+    private void createBase64CodeFromUserForm(UserDto userDto, String fileName) {
         log.info("Code attach in Base64");
         String formBase64 = fileWorker.getUserFormInBase64Format(fileName);
-        log.info("Save attach in base64 UserName:" + userView.getUsertgid());
-        userView.setAttachBase64Code(formBase64);
+        log.info("Save attach in base64 UserName:" + userDto.getUsertgid());
+        userDto.setAttachBase64Code(formBase64);
     }
 
     private void addSearchCriteria(User user, List<String> genders, List<String> lookingFor) {

@@ -1,5 +1,5 @@
-package ru.liga.homework.api;
+package ru.liga.homework.util.form;
 
-public interface UsersFormService {
+public interface UsersForm {
     String createUserForm(Long userTgId, String header, String description);
 }

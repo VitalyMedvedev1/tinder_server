@@ -6,13 +6,15 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import static org.junit.jupiter.api.Assertions.*;
-import ru.liga.homework.api.UserService;
+
 import ru.liga.homework.db.entity.User;
 import ru.liga.homework.db.repository.UserRepository;
+import ru.liga.homework.service.impl.UserServiceImpl;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
+import ru.liga.homework.util.form.UsersFormGenerator;
 import ru.liga.homework.util.FileWorker;
 import ru.liga.homework.util.mapper.UserMapper;
-import ru.liga.homework.model.User.UserView;
+import ru.liga.homework.model.UserDto;
 import ru.liga.homework.type.StaticConstant;
 
 import java.util.Arrays;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 class UserServiceFindFavoritesTest {
 
     public final UserRepository userRepository = Mockito.mock(UserRepository.class);
-    public final UserService userService = new DefaultUserService(userRepository, new ModelMapper(), new UserMapper(new ModelMapper()), new DefaultUsersFormService(new FileWorker()), new ConvertTextToPreRevolution(), new FileWorker());
+    public final UserService userService = new UserServiceImpl(userRepository, new ModelMapper(), new UserMapper(new ModelMapper()), new UsersFormGenerator(new FileWorker()), new ConvertTextToPreRevolution(), new FileWorker());
 
     @Test
     public void findFavorites() {
@@ -48,12 +50,12 @@ class UserServiceFindFavoritesTest {
                 )));
 
         Mockito.when(userRepository.findByUsertgid(null)).thenReturn(java.util.Optional.of(user));
-        List<UserView> listUsers = userService.findFavorites(null);
+        List<UserDto> listUsers = userService.findFavorites(null);
 
         assertEquals(7, listUsers.size());
-        assertEquals(StaticConstant.YOU_ARE_LOVE, listUsers.stream().filter(userView -> userView.getId() == 7).map(UserView::getLoveSign).collect(Collectors.joining()));
-        assertEquals(StaticConstant.MUTUAL_LOVE, listUsers.stream().filter(userView -> userView.getId() == 1).map(UserView::getLoveSign).collect(Collectors.joining()));
-        assertEquals(StaticConstant.LOVE, listUsers.stream().filter(userView -> userView.getId() == 5).map(UserView::getLoveSign).collect(Collectors.joining()));
+        assertEquals(StaticConstant.YOU_ARE_LOVE, listUsers.stream().filter(userView -> userView.getId() == 7).map(UserDto::getLoveSign).collect(Collectors.joining()));
+        assertEquals(StaticConstant.MUTUAL_LOVE, listUsers.stream().filter(userView -> userView.getId() == 1).map(UserDto::getLoveSign).collect(Collectors.joining()));
+        assertEquals(StaticConstant.LOVE, listUsers.stream().filter(userView -> userView.getId() == 5).map(UserDto::getLoveSign).collect(Collectors.joining()));
     }
     @Test
     public void findFavorites_LOVE() {
@@ -64,10 +66,10 @@ class UserServiceFindFavoritesTest {
                 )));
 
         Mockito.when(userRepository.findByUsertgid(null)).thenReturn(java.util.Optional.of(user));
-        List<UserView> listUsers = userService.findFavorites(null);
+        List<UserDto> listUsers = userService.findFavorites(null);
 
         assertEquals(1, listUsers.size());
-        assertEquals(StaticConstant.YOU_ARE_LOVE, listUsers.stream().limit(1).map(UserView::getLoveSign).collect(Collectors.joining()));
+        assertEquals(StaticConstant.YOU_ARE_LOVE, listUsers.stream().limit(1).map(UserDto::getLoveSign).collect(Collectors.joining()));
     }
 
     @Test
@@ -79,10 +81,10 @@ class UserServiceFindFavoritesTest {
                 )));
 
         Mockito.when(userRepository.findByUsertgid(null)).thenReturn(java.util.Optional.of(user));
-        List<UserView> listUsers = userService.findFavorites(null);
+        List<UserDto> listUsers = userService.findFavorites(null);
 
         assertEquals(1, listUsers.size());
-        assertEquals(StaticConstant.LOVE, listUsers.stream().limit(1).map(UserView::getLoveSign).collect(Collectors.joining()));
+        assertEquals(StaticConstant.LOVE, listUsers.stream().limit(1).map(UserDto::getLoveSign).collect(Collectors.joining()));
     }
 
     @Test
@@ -98,9 +100,9 @@ class UserServiceFindFavoritesTest {
                 )));
 
         Mockito.when(userRepository.findByUsertgid(null)).thenReturn(java.util.Optional.of(user));
-        List<UserView> listUsers = userService.findFavorites(null);
+        List<UserDto> listUsers = userService.findFavorites(null);
 
         assertEquals(1, listUsers.size());
-        assertEquals(StaticConstant.MUTUAL_LOVE, listUsers.stream().limit(1).map(UserView::getLoveSign).collect(Collectors.joining()));
+        assertEquals(StaticConstant.MUTUAL_LOVE, listUsers.stream().limit(1).map(UserDto::getLoveSign).collect(Collectors.joining()));
     }
 }

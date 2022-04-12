@@ -49,14 +49,12 @@ public class User {
     @JoinTable(name = "users_like", schema = "otpmm",
             joinColumns = {@JoinColumn(name = "user_id_who")},
             inverseJoinColumns = {@JoinColumn(name = "user_id_that")})
-    @JsonIgnore
     private Set<User> likes = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "users_like", schema = "otpmm",
             joinColumns = {@JoinColumn(name = "user_id_that")},
             inverseJoinColumns = {@JoinColumn(name = "user_id_who")})
-    @JsonIgnore
     private Set<User> likeBy = new HashSet<>();
 
     @Override

@@ -1,4 +1,4 @@
-package ru.liga.homework.web.advice;
+package ru.liga.homework.exception.handler;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -6,10 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.liga.homework.exception.BusinessLogicException;
-import ru.liga.homework.web.response.ErrorResponse;
+import ru.liga.homework.exception.response.ErrorResponse;
 
 import javax.persistence.EntityNotFoundException;
-import java.sql.SQLException;
 
 
 @ControllerAdvice

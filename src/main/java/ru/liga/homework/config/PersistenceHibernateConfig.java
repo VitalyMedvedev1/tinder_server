@@ -1,4 +1,4 @@
-package ru.liga.homework.configuration;
+package ru.liga.homework.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

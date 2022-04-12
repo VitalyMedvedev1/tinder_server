@@ -1,6 +1,5 @@
-package ru.liga.homework.model.User;
+package ru.liga.homework.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,13 +9,12 @@ import ru.liga.homework.type.LookingFor;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.util.Set;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserView {
+public class UserDto {
 
     private Long id;
     private Long usertgid;
@@ -32,11 +30,6 @@ public class UserView {
     private LookingFor lookingFor;
     private String formFileName;
     private String attachBase64Code;
-
-//    @JsonIgnore
-//    private Set<UserView> likes;
-//    @JsonIgnore
-//    private Set<UserView> likeBy;
 
     private String description;
     private String loveSign;

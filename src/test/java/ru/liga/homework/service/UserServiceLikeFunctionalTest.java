@@ -5,10 +5,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import ru.liga.homework.api.UserService;
 import ru.liga.homework.db.entity.User;
 import ru.liga.homework.db.repository.UserRepository;
+import ru.liga.homework.service.impl.UserServiceImpl;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
+import ru.liga.homework.util.form.UsersFormGenerator;
 import ru.liga.homework.util.FileWorker;
 import ru.liga.homework.util.mapper.UserMapper;
 
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceLikeFunctionalTest {
 
     private UserRepository userRepository = Mockito.mock(UserRepository.class);
-    public final UserService userService = new DefaultUserService(userRepository, new ModelMapper(), new UserMapper(new ModelMapper()), new DefaultUsersFormService(new FileWorker()), new ConvertTextToPreRevolution(), new FileWorker());
+    public final UserService userService = new UserServiceImpl(userRepository, new ModelMapper(), new UserMapper(new ModelMapper()), new UsersFormGenerator(new FileWorker()), new ConvertTextToPreRevolution(), new FileWorker());
 
     @Test
     void like() {

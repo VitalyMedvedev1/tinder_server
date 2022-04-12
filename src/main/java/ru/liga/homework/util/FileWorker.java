@@ -30,24 +30,20 @@ public class FileWorker {
     }
 
     public String getUserFormInBase64Format(String fileName) {
-        byte[] fileContent;
+
         try {
-            fileContent = FileUtils.readFileToByteArray(new File(StaticConstant.USER_DIR + StaticConstant.FILE_DIR + fileName));
+            byte[] fileContent = FileUtils.readFileToByteArray(new File(StaticConstant.USER_DIR + StaticConstant.FILE_DIR + fileName));
+            return Base64.getEncoder().encodeToString(fileContent);
         } catch (IOException e) {
             log.error("Error when get userName FORM from path: {} {} {}", StaticConstant.USER_DIR, StaticConstant.FILE_DIR, fileName);
             throw new BusinessLogicException("Error when get userName FORM from path: " + e.getMessage());
         }
-        return Base64.getEncoder().encodeToString(fileContent);
     }
 
     public void deleteFileFromDisc(String fileName) {
-        try {
-            log.debug("Delete form file with name: {}", fileName);
-            boolean delete = new File(StaticConstant.USER_DIR + StaticConstant.FILE_DIR + fileName).delete();
-            if (!delete){
-                throw new BusinessLogicException("Error delete file" + StaticConstant.USER_DIR + StaticConstant.FILE_DIR + fileName);
-            }
-        } catch (Exception e) {
+        log.debug("Delete form file with name: {}", fileName);
+        boolean delete = new File(StaticConstant.USER_DIR + StaticConstant.FILE_DIR + fileName).delete();
+        if (!delete) {
             throw new BusinessLogicException("Error delete file" + StaticConstant.USER_DIR + StaticConstant.FILE_DIR + fileName);
         }
     }

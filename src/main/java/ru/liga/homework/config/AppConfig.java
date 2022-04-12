@@ -1,4 +1,4 @@
-package ru.liga.homework.configuration;
+package ru.liga.homework.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;

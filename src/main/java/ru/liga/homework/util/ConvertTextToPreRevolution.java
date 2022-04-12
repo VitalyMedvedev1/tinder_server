@@ -30,7 +30,7 @@ public class ConvertTextToPreRevolution {
 
     protected String addEP(String text) {
         log.debug("Convert text {}, add symbol {}", text, EP);
-        List<String> listText = new ArrayList<>(Arrays.asList(text.split(REG_EXP_STRING)));
+        List<String> listText = Arrays.asList(text.split(REG_EXP_STRING));
         Pattern pattern = Pattern.compile(CONSONANTS_PATTERN);
 
         return listText.stream()
@@ -59,96 +59,22 @@ public class ConvertTextToPreRevolution {
 
     private static final Map<String, String> hashMapReplaceFITA = getHashMapFita();
 
-    private static Map<String, String> getHashMapFita() {
-        return new HashMap<>() {{
-            put("агафья", "Агаѳья");
-            put("Агафья", "Агаѳья");
-            put("Анфим", "Анѳим");
-            put("анфим", "Анѳим");
-            put("Aфанасий", "Аѳанасий");
-            put("афанасий", "Аѳанасий");
-            put("Афина", "Аѳина");
-            put("афина", "Аѳина");
-            put("Варфоломей", "варѳоломей");
-            put("варфоломей", "варѳоломей");
-            put("Голиаф", "Голиаѳ");
-            put("голиаф", "Голиаѳ");
-            put("Евфимий", "Евѳимий");
-            put("евфимий", "Евѳимий");
-            put("Марфа", "Марѳа");
-            put("марфа", "Марѳа");
-            put("Матфей", "Матѳей");
-            put("матфей", "Матѳей");
-            put("Мефодий", "Меѳодий");
-            put("мефодий", "Меѳодий");
-            put("Нафанаил", "Наѳанаил");
-            put("нафанаил", "Наѳанаил");
-            put("Парфенон", "Парѳенон");
-            put("парфенон", "Парѳенон");
-            put("Пифагор", "Пиѳагор");
-            put("пифагор", "Пиѳагор");
-            put("Руфь", "Руѳь");
-            put("руфь", "Руѳь");
-            put("саваоф", "Саваоѳ");
-            put("Саваоф", "Саваоѳ");
-            put("Тимофей", "Тимоѳей");
-            put("тимофей", "Тимоѳей");
-            put("Эсфирь", "Эсѳирь");
-            put("эсфирь", "Эсѳирь");
-            put("Иудифь", "Иудиѳь");
-            put("иудифь", "Иудиѳь");
-            put("Фаддей", "Ѳаддей");
-            put("фаддей", "Ѳаддей");
-            put("Фекла", "Ѳекла");
-            put("фекла", "Ѳекла");
-            put("Фемида", "Ѳемида");
-            put("фемида", "Ѳемида");
-            put("Фемистокл", "Ѳемистокл");
-            put("фемистокл", "Ѳемистокл");
-            put("Феодор", "Ѳеодор");
-            put("феодор", "Ѳеодор");
-            put("Фёдор", "Ѳёдор");
-            put("фёдор", "Ѳёдор");
-            put("федя", "Ѳедя");
-            put("Федя", "Ѳедя");
-            put("феодосий", "Ѳеодосий");
-            put("Феодосий", "Ѳеодосий");
-            put("Федосий", "Ѳедосий");
-            put("федосий", "Ѳедосий");
-            put("Феодосия", "Ѳеодосия");
-            put("феодосия", "Ѳеодосия");
-            put("Феодот", "Ѳеодот");
-            put("феодот", "Ѳеодот");
-            put("Федот", "Ѳедот");
-            put("федот", "Ѳедот");
-            put("Феофан", "Ѳеоѳан");
-            put("феофан", "Ѳеоѳан");
-            put("Феофил", "Ѳеоѳил");
-            put("феофил", "Ѳеоѳил");
-            put("ферапонт", "Ѳерапонт");
-            put("Ферапонт", "Ѳерапонт");
-            put("Фома", "Ѳома");
-            put("фома", "Ѳома");
-            put("Фоминична", "Ѳоминична");
-            put("фоминична", "Ѳоминична");
-        }};
-    }
-
 
     protected String replaceFITAinUserName(String text) {
         log.debug("Convert text(name) {}, replace 'qp' on symbol {}", text, FITA);
         List<String> listText = new ArrayList<>(Arrays.asList(text.split(REG_EXP_STRING)));
-        return listText.stream().map(
-                s -> {
-                    for (Map.Entry<String, String> entry : hashMapReplaceFITA.entrySet()
-                    ) {
-                        if (s.contains(entry.getKey())) {
-                            s = entry.getValue();
+        return listText.stream()
+                .map(
+                        s -> {
+                            for (Map.Entry<String, String> entry : hashMapReplaceFITA.entrySet()
+                            ) {
+                                if (s.contains(entry.getKey())) {
+                                    s = entry.getValue();
+                                }
+                            }
+                            return s;
                         }
-                    }
-                    return s;
-                }
-        ).collect(Collectors.joining(SPACE));
+                ).collect(Collectors.joining(SPACE));
     }
 
     private static final Map<String, String> hashMapReplaceIATb = createHashMap();
@@ -157,19 +83,20 @@ public class ConvertTextToPreRevolution {
     protected String replaceIATb(String text) {
         List<String> listText = new ArrayList<>(Arrays.asList(text.split(REG_EXP_STRING)));
 
-        return listText.stream().map(
-                s -> {
-                    for (Map.Entry<String, String> entry : hashMapReplaceIATb.entrySet()
-                    ) {
-                        if (s.contains(entry.getKey())) {
-                            s = s.substring(INDX_FIRST, s.indexOf(entry.getKey()))
-                                    + entry.getValue() +
-                                    s.substring(s.indexOf(entry.getKey()) + entry.getKey().length());
+        return listText.stream()
+                .map(
+                        s -> {
+                            for (Map.Entry<String, String> entry : hashMapReplaceIATb.entrySet()
+                            ) {
+                                if (s.contains(entry.getKey())) {
+                                    s = s.substring(INDX_FIRST, s.indexOf(entry.getKey()))
+                                            + entry.getValue() +
+                                            s.substring(s.indexOf(entry.getKey()) + entry.getKey().length());
+                                }
+                            }
+                            return s;
                         }
-                    }
-                    return s;
-                }
-        ).collect(Collectors.joining(SPACE));
+                ).collect(Collectors.joining(SPACE));
     }
 
     private static Map<String, String> createHashMap() {
@@ -534,5 +461,80 @@ public class ConvertTextToPreRevolution {
                 put("цеп", "цѣп");
             }
         };
+    }
+
+    private static Map<String, String> getHashMapFita() {
+        return new HashMap<>() {{
+            put("агафья", "Агаѳья");
+            put("Агафья", "Агаѳья");
+            put("Анфим", "Анѳим");
+            put("анфим", "Анѳим");
+            put("Aфанасий", "Аѳанасий");
+            put("афанасий", "Аѳанасий");
+            put("Афина", "Аѳина");
+            put("афина", "Аѳина");
+            put("Варфоломей", "варѳоломей");
+            put("варфоломей", "варѳоломей");
+            put("Голиаф", "Голиаѳ");
+            put("голиаф", "Голиаѳ");
+            put("Евфимий", "Евѳимий");
+            put("евфимий", "Евѳимий");
+            put("Марфа", "Марѳа");
+            put("марфа", "Марѳа");
+            put("Матфей", "Матѳей");
+            put("матфей", "Матѳей");
+            put("Мефодий", "Меѳодий");
+            put("мефодий", "Меѳодий");
+            put("Нафанаил", "Наѳанаил");
+            put("нафанаил", "Наѳанаил");
+            put("Парфенон", "Парѳенон");
+            put("парфенон", "Парѳенон");
+            put("Пифагор", "Пиѳагор");
+            put("пифагор", "Пиѳагор");
+            put("Руфь", "Руѳь");
+            put("руфь", "Руѳь");
+            put("саваоф", "Саваоѳ");
+            put("Саваоф", "Саваоѳ");
+            put("Тимофей", "Тимоѳей");
+            put("тимофей", "Тимоѳей");
+            put("Эсфирь", "Эсѳирь");
+            put("эсфирь", "Эсѳирь");
+            put("Иудифь", "Иудиѳь");
+            put("иудифь", "Иудиѳь");
+            put("Фаддей", "Ѳаддей");
+            put("фаддей", "Ѳаддей");
+            put("Фекла", "Ѳекла");
+            put("фекла", "Ѳекла");
+            put("Фемида", "Ѳемида");
+            put("фемида", "Ѳемида");
+            put("Фемистокл", "Ѳемистокл");
+            put("фемистокл", "Ѳемистокл");
+            put("Феодор", "Ѳеодор");
+            put("феодор", "Ѳеодор");
+            put("Фёдор", "Ѳёдор");
+            put("фёдор", "Ѳёдор");
+            put("федя", "Ѳедя");
+            put("Федя", "Ѳедя");
+            put("феодосий", "Ѳеодосий");
+            put("Феодосий", "Ѳеодосий");
+            put("Федосий", "Ѳедосий");
+            put("федосий", "Ѳедосий");
+            put("Феодосия", "Ѳеодосия");
+            put("феодосия", "Ѳеодосия");
+            put("Феодот", "Ѳеодот");
+            put("феодот", "Ѳеодот");
+            put("Федот", "Ѳедот");
+            put("федот", "Ѳедот");
+            put("Феофан", "Ѳеоѳан");
+            put("феофан", "Ѳеоѳан");
+            put("Феофил", "Ѳеоѳил");
+            put("феофил", "Ѳеоѳил");
+            put("ферапонт", "Ѳерапонт");
+            put("Ферапонт", "Ѳерапонт");
+            put("Фома", "Ѳома");
+            put("фома", "Ѳома");
+            put("Фоминична", "Ѳоминична");
+            put("фоминична", "Ѳоминична");
+        }};
     }
 }
