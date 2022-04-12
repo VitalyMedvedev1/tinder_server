@@ -1,20 +1,20 @@
 package ru.liga.homework.service;
 
 import org.springframework.data.domain.Page;
-import ru.liga.homework.model.UserDto;
+import ru.liga.homework.model.UserElement;
 
 import java.util.List;
 
 public interface UserService {
-    UserDto find(Long userTgId);
+    UserElement findByTgId(Long userTgId);
 
-    UserDto create(UserDto userDto);
+    UserElement create(UserElement userElement);
 
     void like(Long userTgIdWhoLikes, Long userTgIdWhoIsLike);
 
-    List<UserDto> findFavorites(Long userTgId);
+    List<UserElement> findFavorites(Long userTgId);
 
-    Page<UserDto> findUsersWithPageable(Long userTgId, int page, int size);
+    Page<UserElement> findUsersWithPageable(Long userTgId, int page, int size);
 
-    UserDto update(UserDto userDto);
+    UserElement update(UserElement userElement);
 }

@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.liga.homework.service.UserService;
-import ru.liga.homework.model.UserDto;
+import ru.liga.homework.model.UserElement;
 
 import java.util.List;
 
@@ -20,18 +20,18 @@ public class UserController {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto create(@RequestBody UserDto userDto) {
-        return userService.create(userDto);
+    public UserElement create(@RequestBody UserElement userElement) {
+        return userService.create(userElement);
     }
 
     @GetMapping("/{username}")
-    public UserDto find(@PathVariable("username") Long userTgId) {
-        return userService.find(userTgId);
+    public UserElement find(@PathVariable("username") Long userTgId) {
+        return userService.findByTgId(userTgId);
     }
 
     @PutMapping("/")
-    public UserDto update(@RequestBody UserDto userDto) {
-        return userService.update(userDto);
+    public UserElement update(@RequestBody UserElement userElement) {
+        return userService.update(userElement);
     }
 
     @PostMapping("/{username1}/likes/{username2}")
@@ -41,14 +41,14 @@ public class UserController {
     }
 
     @GetMapping("/{username}/favorite")
-    public List<UserDto> findFavorites(@PathVariable("username") Long userTgId) {
+    public List<UserElement> findFavorites(@PathVariable("username") Long userTgId) {
         return userService.findFavorites(userTgId);
     }
 
     @GetMapping("/")
-    public Page<UserDto> findUsersWithPageable(@RequestParam(value = "username") Long userTgId,
-                                               @RequestParam(value = "page") int page,
-                                               @RequestParam(value = "size") int size) {
+    public Page<UserElement> findUsersWithPageable(@RequestParam(value = "username") Long userTgId,
+                                                   @RequestParam(value = "page") int page,
+                                                   @RequestParam(value = "size") int size) {
         return userService.findUsersWithPageable(userTgId, page, size);
     }
 }

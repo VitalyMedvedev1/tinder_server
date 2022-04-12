@@ -8,7 +8,7 @@ import org.modelmapper.ModelMapper;
 import ru.liga.homework.util.form.UsersForm;
 import ru.liga.homework.repository.entity.User;
 import ru.liga.homework.repository.UserRepository;
-import ru.liga.homework.model.UserDto;
+import ru.liga.homework.model.UserElement;
 import ru.liga.homework.service.impl.UserServiceImpl;
 import ru.liga.homework.type.Gender;
 import ru.liga.homework.type.LoveSearch;
@@ -34,24 +34,24 @@ class UserServiceUpdateUserTestImpl {
 
     @Test
     void updateWith_NOT_CreatedNewForm() {
-        UserDto userDto = new UserDto(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LoveSearch.ALL, "TEST_FILE_999.txt", "1", "DESCRIPTION","");
+        UserElement userElement = new UserElement(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LoveSearch.ALL, "TEST_FILE_999.txt", "1", "DESCRIPTION","");
         User user = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, "1", "HEADER1", "1", "DESCRIPTION", "1", new HashSet<>(), new HashSet<>());
         Mockito.when(userRepository.findByUsertgid(ID_FUTURE_VERSION)).thenReturn(java.util.Optional.of(user));
-        User user1 = modelMapper.map(userDto, User.class);
-        Mockito.when(userRepository.save(modelMapper.map(userDto, User.class))).thenReturn(user);
-        UserDto userDtoNew = userService.update(userDto);
+        User user1 = modelMapper.map(userElement, User.class);
+        Mockito.when(userRepository.save(modelMapper.map(userElement, User.class))).thenReturn(user);
+        UserElement userElementNew = userService.update(userElement);
 
         Mockito.verify(usersForm, Mockito.times(1)).createUserForm(ID_FUTURE_VERSION, "1", "DESCRIPTION");
     }
 
     @Test
     void updateWithCreatedNewForm() {
-        UserDto userDto = new UserDto(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LoveSearch.ALL, "TEST_FILE_999.txt", "1", "DESCRIPTION","");
+        UserElement userElement = new UserElement(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LoveSearch.ALL, "TEST_FILE_999.txt", "1", "DESCRIPTION","");
         User user = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, "1", "HEADER", "1", "DESCRIPTION", "1", new HashSet<>(), new HashSet<>());
         Mockito.when(userRepository.findByUsertgid(ID_FUTURE_VERSION)).thenReturn(java.util.Optional.of(user));
-        User user1 = modelMapper.map(userDto, User.class);
-        Mockito.when(userRepository.save(modelMapper.map(userDto, User.class))).thenReturn(user);
-        UserDto userDtoNew = userService.update(userDto);
+        User user1 = modelMapper.map(userElement, User.class);
+        Mockito.when(userRepository.save(modelMapper.map(userElement, User.class))).thenReturn(user);
+        UserElement userElementNew = userService.update(userElement);
 
         Mockito.verify(usersForm, Mockito.times(1)).createUserForm(ID_FUTURE_VERSION, "1", "DESCRIPTION");
     }

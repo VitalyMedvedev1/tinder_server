@@ -13,7 +13,7 @@ import ru.liga.homework.util.form.UsersForm;
 import ru.liga.homework.repository.entity.User;
 import ru.liga.homework.repository.UserRepository;
 import ru.liga.homework.exception.BusinessLogicException;
-import ru.liga.homework.model.UserDto;
+import ru.liga.homework.model.UserElement;
 import ru.liga.homework.service.UserService;
 import ru.liga.homework.constant.Values;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
@@ -41,89 +41,89 @@ public class UserServiceImpl implements UserService {
     private final FileWorker fileWorker;
 
     @Override
-    public UserDto find(Long userTgId) {
-        log.info("Find user with UserName: {}", userTgId);
+    public UserElement findByTgId(Long userTgId) {
+        log.info("Find user with Telegram Id: {}", userTgId);
 
-        UserDto userDto = userMapper.map(findUserByTgId(userTgId));
-        String fileName = userDto.getFormFileName();
+        UserElement userElement = userMapper.map(findUserByTgId(userTgId));
+        String fileName = userElement.getFormFileName();
         if (StringUtils.isEmpty(fileName)) {
-            fileName = createFormAndSave(userDto);
+            fileName = createFormAndSave(userElement);
         }
-        createBase64CodeFromUserForm(userDto, fileName);
-        return userDto;
+        createBase64CodeFromUserForm(userElement, fileName);
+        return userElement;
     }
 
     @Override
-    public UserDto create(UserDto userDto) {
+    public UserElement create(UserElement userElement) {
 
-        log.info("Find user with UserName: {}", userDto.getUsertgid());
-        if (userRepository.findByUsertgid(userDto.getUsertgid()).isPresent()) {
-            throw new BusinessLogicException("User with name already exist: " + userDto.getUsertgid());
+        log.info("Find user with Telegram Id: {}", userElement.getUsertgid());
+        if (userRepository.findByUsertgid(userElement.getUsertgid()).isPresent()) {
+            throw new BusinessLogicException(MessageFormat.format("User with Telegram Id: {0} already exist", userElement.getUsertgid()));
         }
 
-        log.info("Save user with UserName: {}", userDto.getUsertgid());
-        User user = userRepository.save(modelMapper.map(userDto, User.class));
+        log.info("Save user with Telegram Id: {}", userElement.getUsertgid());
+        User user = userRepository.save(modelMapper.map(userElement, User.class));
         String fileName;
         try {
-            fileName = createUserForm(userDto);
-            userDto.setFormFileName(fileName);
-            userDto.setId(user.getId());
-            userRepository.save(modelMapper.map(userDto, User.class));
+            fileName = createUserForm(userElement);
+            userElement.setFormFileName(fileName);
+            userElement.setId(user.getId());
+            userRepository.save(modelMapper.map(userElement, User.class));
         } catch (Exception e) {
-            log.error("Error wen create user form with login {} \n Error message: {}", userDto.getUsertgid(), e.getMessage());
-            if ((fileName = userDto.getFormFileName()) != null) {
+            log.error("Error wen create user form with Telegram Id {} \n Error message: {}", userElement.getUsertgid(), e.getMessage());
+            if ((fileName = userElement.getFormFileName()) != null) {
                 fileWorker.deleteFileFromDisc(fileName);
             }
-            throw new BusinessLogicException("Error create new user: " + e.getMessage());
+            throw new BusinessLogicException("Error create new user with Telegram Id: " + e.getMessage());
         }
 
-        createBase64CodeFromUserForm(userDto, fileName);
-        return userDto;
+        createBase64CodeFromUserForm(userElement, fileName);
+        return userElement;
     }
 
 
     @Override
     public void like(Long userTgIdWhoLikes, Long userTgIdWhoIsLike) {
         if (userTgIdWhoLikes.equals(userTgIdWhoIsLike)) {
-            throw new BusinessLogicException("User cant like yourself, name: " + userTgIdWhoLikes);
+            throw new BusinessLogicException("User cant like yourself, Telegram Id: " + userTgIdWhoLikes);
         }
         User userWhoLikes = findUserByTgId(userTgIdWhoLikes);
         User userWhoIsLike = findUserByTgId(userTgIdWhoIsLike);
 
-        log.info("Save new record - like, user who like: {}, user who was like: {}", userWhoLikes, userWhoIsLike);
+        log.info("Save new record - like, user who like Telegram Id: {}, user who was like Telegram Id: {}", userWhoLikes.getUsertgid(), userWhoIsLike.getUsertgid());
         userWhoLikes.getLikes().add(userWhoIsLike);
     }
 
     @Override
-    public List<UserDto> findFavorites(Long userTgId) {
+    public List<UserElement> findFavorites(Long userTgId) {
         User user = findUserByTgId(userTgId);
         Set<User> usersWhoLikes = user.getLikes();
         Set<User> usersWhoIsLike = user.getLikeBy();
 
-        List<UserDto> userDtoList = usersWhoIsLike.stream()
+        List<UserElement> userElementList = usersWhoIsLike.stream()
                 .filter(user1 -> !usersWhoLikes.contains(user1))
                 .map(user1 -> {
-                    UserDto userDto = userMapper.map(user1);
-                    userDto.setLoveSign(Values.YOU_ARE_LOVE);
-                    return userDto;
+                    UserElement userElement = userMapper.map(user1);
+                    userElement.setLoveSign(Values.YOU_ARE_LOVE);
+                    return userElement;
                 }).collect(Collectors.toList());
-        userDtoList.addAll(
+        userElementList.addAll(
                 usersWhoLikes.stream()
                         .map(user1 -> {
-                            UserDto userDto = userMapper.map(user1);
+                            UserElement userElement = userMapper.map(user1);
                             if (usersWhoIsLike.contains(user1)) {
-                                userDto.setLoveSign(Values.MUTUAL_LOVE);
+                                userElement.setLoveSign(Values.MUTUAL_LOVE);
                             } else {
-                                userDto.setLoveSign(Values.LOVE);
+                                userElement.setLoveSign(Values.LOVE);
                             }
-                            return userDto;
+                            return userElement;
                         }).collect(Collectors.toList())
         );
-        return userDtoList;
+        return userElementList;
     }
 
     @Override
-    public Page<UserDto> findUsersWithPageable(Long userTgId, int page, int size) {
+    public Page<UserElement> findUsersWithPageable(Long userTgId, int page, int size) {
         User user = findUserByTgId(userTgId);
         PageRequest pageable = PageRequest.of(page, size);
         List<String> genders = new ArrayList<>();
@@ -132,12 +132,12 @@ public class UserServiceImpl implements UserService {
 
         Page<User> userPage = userRepository.findUsers(user.getId(), genders, lookingFor, pageable);
         if (userPage == null) {
-            throw new BusinessLogicException(MessageFormat.format("Form for user: {0} not found", userTgId));
+            throw new BusinessLogicException(MessageFormat.format("Form for user Telegram Id: {0} not found", userTgId));
         }
 
-        List<UserDto> listUserDto = userPage.getContent()
+        List<UserElement> listUserElement = userPage.getContent()
                 .stream()
-                .map(user1 -> modelMapper.map(user1, UserDto.class)).peek(userView1 -> {
+                .map(user1 -> modelMapper.map(user1, UserElement.class)).peek(userView1 -> {
                     String fileName = userView1.getFormFileName();
                     if (fileName == null) {
                         createBase64CodeFromUserForm(userView1, createFormAndSave(userView1));
@@ -146,74 +146,71 @@ public class UserServiceImpl implements UserService {
                     }
                 }).collect(Collectors.toList());
 
-        return PageableExecutionUtils.getPage(listUserDto, pageable, userPage::getTotalElements);
+        return PageableExecutionUtils.getPage(listUserElement, pageable, userPage::getTotalElements);
     }
 
     @Override
-    public UserDto update(UserDto userDto) {
-        log.info("Update user, UserName: {}", userDto.getUsertgid());
-        User user = findUserByTgId(userDto.getUsertgid());
+    public UserElement update(UserElement userElement) {
+        log.info("Update user, Telegram Id: {}", userElement.getUsertgid());
+        User user = findUserByTgId(userElement.getUsertgid());
         String fileName = user.getFormFileName();
-        if (!userDto.getFormTitle().equals(user.getFormTitle()) || !userDto.getFormDescription().equals(user.getFormDescription())) {
+        if (!userElement.getFormTitle().equals(user.getFormTitle()) || !userElement.getFormDescription().equals(user.getFormDescription())) {
             fileWorker.deleteFileFromDisc(fileName);
             try {
-                fileName = createUserForm(userDto);
-                userDto.setFormFileName(fileName);
-                userDto.setId(user.getId());
+                fileName = createUserForm(userElement);
+                userElement.setFormFileName(fileName);
+                userElement.setId(user.getId());
             } catch (Exception e) {
-                log.error("Error wen create user form with login {} \n Error message: {}", userDto.getUsertgid(), e.getMessage());
-                if ((fileName = userDto.getFormFileName()) != null) {
+                log.error("Error wen create user form with Telegram Id {} \n Error message: {}", userElement.getUsertgid(), e.getMessage());
+                if ((fileName = userElement.getFormFileName()) != null) {
                     fileWorker.deleteFileFromDisc(fileName);
                 }
                 throw new BusinessLogicException("Error create new user: " + e.getMessage());
             }
         }
-        userDto.setId(user.getId());
-        userDto.setFormFileName(fileName);
-        User userNewData = modelMapper.map(userDto, User.class);
+        userElement.setId(user.getId());
+        userElement.setFormFileName(fileName);
+        User userNewData = modelMapper.map(userElement, User.class);
         userNewData.getLikes().addAll(user.getLikes());
         userNewData.getLikeBy().addAll(user.getLikeBy());
         userRepository.save(userNewData);
-        createBase64CodeFromUserForm(userDto, fileName);
-        return userDto;
+        createBase64CodeFromUserForm(userElement, fileName);
+        return userElement;
     }
 
     private User findUserByTgId(Long userTgId) {
         log.info("Find user with UserName: {}", userTgId);
         return userRepository.findByUsertgid(userTgId).
                 orElseThrow(
-                        () -> {
-                            log.error("User not found with login: {}", userTgId);
-                            return new EntityNotFoundException("User not found with login: " + userTgId);
-                        });
+                        () -> new EntityNotFoundException("User not found with Telegram Id: " + userTgId));
     }
 
-    private String createFormAndSave(UserDto userDto) {
+    private String createFormAndSave(UserElement userElement) {
         String fileName;
-        log.info("Create user form when find user but not find his form, username: {}", userDto.getUsertgid());
-        fileName = createUserForm(userDto);
-        userDto.setFormFileName(fileName);
-        userRepository.save(modelMapper.map(userDto, User.class));
+        log.info("Create user form when find user but not find his form, username: {}", userElement.getUsertgid());
+        fileName = createUserForm(userElement);
+        userElement.setFormFileName(fileName);
+        userRepository.save(modelMapper.map(userElement, User.class));
         return fileName;
     }
 
-    private String createUserForm(UserDto userDto) {
-        log.info("Create form for user with UserName: {} id: {}", userDto.getUsertgid(), userDto.getId());
-        String preRevolutionFormTitle = convertTextToPreRevolution.convert(userDto.getFormTitle());
-        String preRevolutionFormDesc = convertTextToPreRevolution.convert(userDto.getFormDescription());
-        String fileName = usersForm.createUserForm(userDto.getUsertgid(),
+    private String createUserForm(UserElement userElement) {
+        log.info("Create form for user with UserName: {} id: {}", userElement.getUsertgid(), userElement.getId());
+        String preRevolutionFormTitle = convertTextToPreRevolution.convert(userElement.getFormTitle());
+        String preRevolutionFormDesc = convertTextToPreRevolution.convert(userElement.getFormDescription());
+        String fileName = usersForm.createUserForm(userElement.getUsertgid(),
                 preRevolutionFormTitle,
                 preRevolutionFormDesc);
 
-        log.info("Save form on user with formName: {} username: {}", fileName, userDto.getUsertgid());
+        log.info("Save form on user with formName: {} username: {}", fileName, userElement.getUsertgid());
         return fileName;
     }
 
-    private void createBase64CodeFromUserForm(UserDto userDto, String fileName) {
+    private void createBase64CodeFromUserForm(UserElement userElement, String fileName) {
         log.info("Code attach in Base64");
         String formBase64 = fileWorker.getUserFormInBase64Format(fileName);
-        log.info("Save attach in base64 UserName:" + userDto.getUsertgid());
-        userDto.setAttachBase64Code(formBase64);
+        log.info("Save attach in base64 UserName:" + userElement.getUsertgid());
+        userElement.setAttachBase64Code(formBase64);
     }
 
 //    private void addSearchCriteria(User user, List<String> genders, List<String> lookingFor) {

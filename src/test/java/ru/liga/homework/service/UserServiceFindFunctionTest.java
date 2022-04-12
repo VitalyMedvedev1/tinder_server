@@ -8,7 +8,7 @@ import org.modelmapper.ModelMapper;
 import ru.liga.homework.util.form.UsersForm;
 import ru.liga.homework.repository.entity.User;
 import ru.liga.homework.repository.UserRepository;
-import ru.liga.homework.model.UserDto;
+import ru.liga.homework.model.UserElement;
 import ru.liga.homework.service.impl.UserServiceImpl;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.FileWorker;
@@ -37,11 +37,11 @@ class UserServiceFindFunctionTest {
 
         Mockito.when(fileWorker.getUserFormInBase64Format(null)).thenReturn("3333");
         Mockito.when(userRepository.findByUsertgid(ID_FUTURE_VERSION)).thenReturn(java.util.Optional.of(user0));
-        UserDto userDto = userService.find(ID_FUTURE_VERSION);
+        UserElement userElement = userService.findByTgId(ID_FUTURE_VERSION);
 
-        assertEquals(userDto.getId(), user0.getId());
-        assertEquals(userDto.getUsertgid(), user0.getUsertgid());
-        assertEquals(userDto.getName(), user0.getName());
-        assertEquals(userDto.getPassword(), user0.getPassword());
+        assertEquals(userElement.getId(), user0.getId());
+        assertEquals(userElement.getUsertgid(), user0.getUsertgid());
+        assertEquals(userElement.getName(), user0.getName());
+        assertEquals(userElement.getPassword(), user0.getPassword());
     }
 }

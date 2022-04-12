@@ -11,7 +11,7 @@ import ru.liga.homework.type.LoveSearch;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class UserElement {
     private Long id;
     private Long usertgid;
     private String name;

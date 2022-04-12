@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
 import ru.liga.homework.exception.BusinessLogicException;
 import ru.liga.homework.constant.Values;
+import ru.liga.homework.exception.CustomIOFileException;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -24,8 +25,7 @@ public class FileWorker {
             ImageIO.write(image, Values.FILE_EXT, file);
             return file.getName();
         } catch (IOException e) {
-            log.error("Error when save form for userName {} \n {}", userTgId, e.getMessage());
-            throw new BusinessLogicException("Error when save form for userName " + userTgId + "\n" + e.getMessage());
+            throw new CustomIOFileException("Error when save form for userName " + userTgId + "\n" + e.getMessage());
         }
     }
 
@@ -35,8 +35,7 @@ public class FileWorker {
             byte[] fileContent = FileUtils.readFileToByteArray(new File(Values.USER_DIR + Values.FILE_DIR + fileName));
             return Base64.getEncoder().encodeToString(fileContent);
         } catch (IOException e) {
-            log.error("Error when get userName FORM from path: {} {} {}", Values.USER_DIR, Values.FILE_DIR, fileName);
-            throw new BusinessLogicException("Error when get userName FORM from path: " + e.getMessage());
+            throw new CustomIOFileException("Error when get userName FORM from path: " + e.getMessage());
         }
     }
 
@@ -44,7 +43,7 @@ public class FileWorker {
         log.debug("Delete form file with name: {}", fileName);
         boolean delete = new File(Values.USER_DIR + Values.FILE_DIR + fileName).delete();
         if (!delete) {
-            throw new BusinessLogicException("Error delete file" + Values.USER_DIR + Values.FILE_DIR + fileName);
+            throw new CustomIOFileException("Error delete file" + Values.USER_DIR + Values.FILE_DIR + fileName);
         }
     }
 }

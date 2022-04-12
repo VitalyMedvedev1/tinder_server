@@ -6,6 +6,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.liga.homework.exception.BusinessLogicException;
+import ru.liga.homework.exception.CustomIOFileException;
 import ru.liga.homework.util.FileWorker;
 
 import javax.imageio.ImageIO;
@@ -46,8 +47,7 @@ public class UsersFormGenerator implements UsersForm {
         try (InputStream inputStream = new ClassPathResource(BACKGROUND_FILE_NAME).getInputStream()) {
             image = ImageIO.read(inputStream);
         } catch (IOException e) {
-            log.error("Error when create form for userName {} \n {}", userTgId, e.getMessage());
-            throw new BusinessLogicException("Error when create form for userName " + userTgId + "\n" + e.getMessage());
+            throw new CustomIOFileException("Error when create form for userName " + userTgId + "\n" + e.getMessage());
         }
         header = header + ",";
         Rectangle rectangle = new Rectangle(image.getWidth(), image.getHeight());

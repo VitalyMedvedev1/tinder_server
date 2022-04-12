@@ -28,7 +28,6 @@ public class User {
     private String name;
     private String password;
 
-    @Column(name = "gender")
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
