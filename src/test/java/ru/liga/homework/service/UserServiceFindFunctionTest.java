@@ -5,6 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import ru.liga.homework.type.Gender;
+import ru.liga.homework.type.LoveSearch;
 import ru.liga.homework.util.form.UsersForm;
 import ru.liga.homework.repository.entity.User;
 import ru.liga.homework.repository.UserRepository;
@@ -33,7 +35,7 @@ class UserServiceFindFunctionTest {
 
     @Test
     void find() {
-        User user0 = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, "1", "1", "1", "1", "123.txt", new HashSet<>(), new HashSet<>());
+        User user0 = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LoveSearch.ALL, "1", "123.txt", new HashSet<>(), new HashSet<>());
 
         Mockito.when(fileWorker.getUserFormInBase64Format(null)).thenReturn("3333");
         Mockito.when(userRepository.findByUsertgid(ID_FUTURE_VERSION)).thenReturn(java.util.Optional.of(user0));

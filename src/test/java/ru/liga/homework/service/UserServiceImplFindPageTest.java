@@ -12,6 +12,8 @@ import ru.liga.homework.repository.entity.User;
 import ru.liga.homework.repository.UserRepository;
 import ru.liga.homework.model.UserElement;
 import ru.liga.homework.service.impl.UserServiceImpl;
+import ru.liga.homework.type.Gender;
+import ru.liga.homework.type.LoveSearch;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.form.UsersFormGenerator;
 import ru.liga.homework.util.FileWorker;
@@ -33,17 +35,17 @@ class UserServiceImplFindPageTest {
 
     @Test
     void findUsersWithPageable() {
-        User user = new User(0L, 0L, "1", "1", "1", "1", "1", "1", "1", new HashSet<>(), new HashSet<>());
+        User user = new User(0L, 0L, "1", "1", Gender.FEMALE, "1", LoveSearch.ALL, "1", "1", new HashSet<>(), new HashSet<>());
         List<User> list = new ArrayList<>(Arrays.asList(
-                new User(1L, 1L, "1", "1", "1", "1", "1", "", "1", new HashSet<>(), new HashSet<>()),
-                new User(2L, 2L, "2", "2", "2", "2", "2", "", "1", new HashSet<>(), new HashSet<>()),
-                new User(3L, 1L, "1", "1", "1", "1", "1", "", "1", new HashSet<>(), new HashSet<>()),
-                new User(4L, 1L, "1", "1", "1", "1", "1", "", "1", new HashSet<>(), new HashSet<>())));
+                new User(1L, 1L, "1", "1", Gender.FEMALE, "1", LoveSearch.ALL, "", "1", new HashSet<>(), new HashSet<>()),
+                new User(2L, 2L, "2", "2", Gender.FEMALE, "2", LoveSearch.ALL, "", "1", new HashSet<>(), new HashSet<>()),
+                new User(3L, 1L, "1", "1", Gender.FEMALE, "1", LoveSearch.ALL, "", "1", new HashSet<>(), new HashSet<>()),
+                new User(4L, 1L, "1", "1", Gender.FEMALE, "1", LoveSearch.ALL, "", "1", new HashSet<>(), new HashSet<>())));
 
         PageRequest pageable = PageRequest.of(1, 1);
         Page<User> userPage = new PageImpl<>(list, pageable, list.size());
         Mockito.when(userRepository.findByUsertgid(0L)).thenReturn(java.util.Optional.of(user));
-        Mockito.when(userRepository.findUsers(user.getId(), new ArrayList<>(Arrays.asList("MALE", "FEMALE")), new ArrayList<>(Arrays.asList( "FEMALE", "ALL")), pageable)).thenReturn(userPage);
+        Mockito.when(userRepository.findUsers(user.getId(), Arrays.asList(Gender.MALE, Gender.FEMALE), Arrays.asList(LoveSearch.FEMALES, LoveSearch.ALL), pageable)).thenReturn(userPage);
         Mockito.when(fileWorker.getUserFormInBase64Format("1")).thenReturn("3333");
         Page<UserElement> userViewPage = userService.findUsersWithPageable(0L, 1, 1);
         assertEquals(1, userPage.getSize());

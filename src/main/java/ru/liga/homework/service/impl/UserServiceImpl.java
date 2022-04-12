@@ -9,15 +9,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.liga.homework.util.form.UsersForm;
-import ru.liga.homework.repository.entity.User;
-import ru.liga.homework.repository.UserRepository;
+import ru.liga.homework.constant.Values;
 import ru.liga.homework.exception.BusinessLogicException;
 import ru.liga.homework.model.UserElement;
+import ru.liga.homework.repository.UserRepository;
+import ru.liga.homework.repository.entity.User;
 import ru.liga.homework.service.UserService;
-import ru.liga.homework.constant.Values;
+import ru.liga.homework.type.Gender;
+import ru.liga.homework.type.LoveSearch;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.FileWorker;
+import ru.liga.homework.util.form.UsersForm;
 import ru.liga.homework.util.mapper.UserMapper;
 
 import javax.persistence.EntityNotFoundException;
@@ -126,11 +128,11 @@ public class UserServiceImpl implements UserService {
     public Page<UserElement> findUsersWithPageable(Long userTgId, int page, int size) {
         User user = findUserByTgId(userTgId);
         PageRequest pageable = PageRequest.of(page, size);
-        List<String> genders = new ArrayList<>();
-        List<String> lookingFor = new ArrayList<>();
-//        addSearchCriteria(user, genders, lookingFor);
+        List<Gender> genders = new ArrayList<>();
+        List<LoveSearch> loveSearches = new ArrayList<>();
+        addSearchCriteria(user, genders, loveSearches);
 
-        Page<User> userPage = userRepository.findUsers(user.getId(), genders, lookingFor, pageable);
+        Page<User> userPage = userRepository.findUsers(user.getId(), genders, loveSearches, pageable);
         if (userPage == null) {
             throw new BusinessLogicException(MessageFormat.format("Form for user Telegram Id: {0} not found", userTgId));
         }
@@ -213,24 +215,24 @@ public class UserServiceImpl implements UserService {
         userElement.setAttachBase64Code(formBase64);
     }
 
-//    private void addSearchCriteria(User user, List<String> genders, List<String> lookingFor) {
-//        switch (user.getLookingFor()) {
-//            case "MALES":
-//                genders.add("MALE");
-//                break;
-//            case "FEMALES":
-//                genders.add("FEMALE");
-//                break;
-//            default:
-//                genders.add("MALE");
-//                genders.add("FEMALE");
-//                break;
-//        }
-//        if ("MALE".equals(user.getGender())) {
-//            lookingFor.add("MALE");
-//        } else {
-//            lookingFor.add("FEMALE");
-//        }
-//        lookingFor.add("ALL");
-//    }
+    private void addSearchCriteria(User user, List<Gender> genders, List<LoveSearch> loveSearches) {
+        switch (user.getLoveSearch().getCode()) {
+            case "male":
+                genders.add(Gender.MALE);
+                break;
+            case "females":
+                genders.add(Gender.FEMALE);
+                break;
+            default:
+                genders.add(Gender.MALE);
+                genders.add(Gender.FEMALE);
+                break;
+        }
+        if (user.getGender().getCode().equals("male")) {
+            loveSearches.add(LoveSearch.MALES);
+        } else {
+            loveSearches.add(LoveSearch.FEMALES);
+        }
+        loveSearches.add(LoveSearch.ALL);
+    }
 }

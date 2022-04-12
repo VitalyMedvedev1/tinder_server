@@ -34,23 +34,23 @@ public class User {
     @Column(name = "form_title")
     private String formTitle;
 
-    @Column(name = "search_love")
+    @Column(name = "love_search")
     @Enumerated(EnumType.STRING)
     private LoveSearch loveSearch;
 
     @Column(name = "form_description")
     private String formDescription;
 
-    @Column(name = "form_file_name")
+    @Column(name = "form_filename")
     private String formFileName;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "users_like", schema = "otpmm",
             joinColumns = {@JoinColumn(name = "user_id_who")},
             inverseJoinColumns = {@JoinColumn(name = "user_id_that")})
     private Set<User> likes = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "users_like", schema = "otpmm",
             joinColumns = {@JoinColumn(name = "user_id_that")},
             inverseJoinColumns = {@JoinColumn(name = "user_id_who")})

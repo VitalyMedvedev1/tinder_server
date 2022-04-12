@@ -11,6 +11,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Date;
 
@@ -39,10 +42,13 @@ public class FileWorker {
         }
     }
 
+    //TODO Переделал NIO
     public void deleteFileFromDisc(String fileName) {
         log.debug("Delete form file with name: {}", fileName);
-        boolean delete = new File(Values.USER_DIR + Values.FILE_DIR + fileName).delete();
-        if (!delete) {
+        Path filePath = Paths.get(Values.USER_DIR + Values.FILE_DIR + fileName);
+        try {
+            Files.delete(filePath);
+        } catch (IOException e) {
             throw new CustomIOFileException("Error delete file" + Values.USER_DIR + Values.FILE_DIR + fileName);
         }
     }

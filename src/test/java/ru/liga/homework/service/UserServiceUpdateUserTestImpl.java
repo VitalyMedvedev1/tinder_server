@@ -35,7 +35,7 @@ class UserServiceUpdateUserTestImpl {
     @Test
     void updateWith_NOT_CreatedNewForm() {
         UserElement userElement = new UserElement(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LoveSearch.ALL, "TEST_FILE_999.txt", "1", "DESCRIPTION","");
-        User user = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, "1", "HEADER1", "1", "DESCRIPTION", "1", new HashSet<>(), new HashSet<>());
+        User user = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.FEMALE, "HEADER1", LoveSearch.ALL, "DESCRIPTION", "1", new HashSet<>(), new HashSet<>());
         Mockito.when(userRepository.findByUsertgid(ID_FUTURE_VERSION)).thenReturn(java.util.Optional.of(user));
         User user1 = modelMapper.map(userElement, User.class);
         Mockito.when(userRepository.save(modelMapper.map(userElement, User.class))).thenReturn(user);
@@ -47,7 +47,7 @@ class UserServiceUpdateUserTestImpl {
     @Test
     void updateWithCreatedNewForm() {
         UserElement userElement = new UserElement(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LoveSearch.ALL, "TEST_FILE_999.txt", "1", "DESCRIPTION","");
-        User user = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, "1", "HEADER", "1", "DESCRIPTION", "1", new HashSet<>(), new HashSet<>());
+        User user = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.FEMALE, "LoveSearch.ALL", LoveSearch.ALL, "DESCRIPTION", "1", new HashSet<>(), new HashSet<>());
         Mockito.when(userRepository.findByUsertgid(ID_FUTURE_VERSION)).thenReturn(java.util.Optional.of(user));
         User user1 = modelMapper.map(userElement, User.class);
         Mockito.when(userRepository.save(modelMapper.map(userElement, User.class))).thenReturn(user);

@@ -18,7 +18,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserElement create(@RequestBody UserElement userElement) {
         return userService.create(userElement);
@@ -29,7 +29,7 @@ public class UserController {
         return userService.findByTgId(userTgId);
     }
 
-    @PutMapping("/")
+    @PutMapping
     public UserElement update(@RequestBody UserElement userElement) {
         return userService.update(userElement);
     }
@@ -45,7 +45,7 @@ public class UserController {
         return userService.findFavorites(userTgId);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public Page<UserElement> findUsersWithPageable(@RequestParam(value = "username") Long userTgId,
                                                    @RequestParam(value = "page") int page,
                                                    @RequestParam(value = "size") int size) {

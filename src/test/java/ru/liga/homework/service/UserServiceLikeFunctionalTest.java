@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 import ru.liga.homework.repository.entity.User;
 import ru.liga.homework.repository.UserRepository;
 import ru.liga.homework.service.impl.UserServiceImpl;
+import ru.liga.homework.type.Gender;
+import ru.liga.homework.type.LoveSearch;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.form.UsersFormGenerator;
 import ru.liga.homework.util.FileWorker;
@@ -25,8 +27,8 @@ class UserServiceLikeFunctionalTest {
 
     @Test
     void like() {
-        User user0 = new User(0L, 111L, "0", "1", "1", "1", "1", "1", "1", new HashSet<>(), new HashSet<>());
-        User user1 = new User(1L, 222L, "1", "1", "1", "1", "1", "1", "1", new HashSet<>(), new HashSet<>());
+        User user0 = new User(0L, 111L, "0", "1", Gender.FEMALE, "1", LoveSearch.ALL, "1", "1", new HashSet<>(), new HashSet<>());
+        User user1 = new User(1L, 222L, "1", "1", Gender.FEMALE, "1", LoveSearch.ALL, "1", "1", new HashSet<>(), new HashSet<>());
 
         Mockito.when(userRepository.findByUsertgid(111L)).thenReturn(java.util.Optional.of(user0));
         Mockito.when(userRepository.findByUsertgid(222L)).thenReturn(java.util.Optional.of(user1));
