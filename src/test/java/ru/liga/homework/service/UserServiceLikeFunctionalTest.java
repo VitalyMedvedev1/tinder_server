@@ -13,7 +13,7 @@ import ru.liga.homework.type.LoveSearch;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.form.UsersFormGenerator;
 import ru.liga.homework.util.FileWorker;
-import ru.liga.homework.util.mapper.UserMapper;
+import ru.liga.homework.model.mapper.UserModelMapper;
 
 import java.util.HashSet;
 
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceLikeFunctionalTest {
 
     private UserRepository userRepository = Mockito.mock(UserRepository.class);
-    public final UserService userService = new UserServiceImpl(userRepository, new ModelMapper(), new UserMapper(new ModelMapper()), new UsersFormGenerator(new FileWorker()), new ConvertTextToPreRevolution(), new FileWorker());
+    public final UserService userService = new UserServiceImpl(userRepository, new ModelMapper(), new UserModelMapper(new ModelMapper()), new UsersFormGenerator(new FileWorker()), new ConvertTextToPreRevolution(), new FileWorker(), null);
 
     @Test
     void like() {

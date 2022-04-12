@@ -10,14 +10,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import ru.liga.homework.repository.entity.User;
 import ru.liga.homework.repository.UserRepository;
-import ru.liga.homework.model.UserElement;
+import ru.liga.homework.model.UserDto;
 import ru.liga.homework.service.impl.UserServiceImpl;
 import ru.liga.homework.type.Gender;
 import ru.liga.homework.type.LoveSearch;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.form.UsersFormGenerator;
 import ru.liga.homework.util.FileWorker;
-import ru.liga.homework.util.mapper.UserMapper;
+import ru.liga.homework.model.mapper.UserModelMapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ class UserServiceImplFindPageTest {
 
     public final UserRepository userRepository = Mockito.mock(UserRepository.class);
     public final FileWorker fileWorker = Mockito.mock(FileWorker.class);
-    public final UserService userService = new UserServiceImpl(userRepository, new ModelMapper(), new UserMapper(new ModelMapper()), new UsersFormGenerator(fileWorker), new ConvertTextToPreRevolution(), fileWorker);
+    public final UserService userService = new UserServiceImpl(userRepository, new ModelMapper(), new UserModelMapper(new ModelMapper()), new UsersFormGenerator(fileWorker), new ConvertTextToPreRevolution(), fileWorker, null);
 
     @Test
     void findUsersWithPageable() {
@@ -47,7 +47,7 @@ class UserServiceImplFindPageTest {
         Mockito.when(userRepository.findByUsertgid(0L)).thenReturn(java.util.Optional.of(user));
         Mockito.when(userRepository.findUsers(user.getId(), Arrays.asList(Gender.MALE, Gender.FEMALE), Arrays.asList(LoveSearch.FEMALES, LoveSearch.ALL), pageable)).thenReturn(userPage);
         Mockito.when(fileWorker.getUserFormInBase64Format("1")).thenReturn("3333");
-        Page<UserElement> userViewPage = userService.findUsersWithPageable(0L, 1, 1);
+        Page<UserDto> userViewPage = userService.findUsersWithPageable(0L, 1, 1);
         assertEquals(1, userPage.getSize());
     }
 

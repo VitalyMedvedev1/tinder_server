@@ -4,14 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.liga.homework.repository.entity.User;
 import ru.liga.homework.type.Gender;
 import ru.liga.homework.type.LoveSearch;
+
+import java.util.Set;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserElement {
+public class UserDto {
     private Long id;
     private Long usertgid;
     private String name;
@@ -23,4 +26,7 @@ public class UserElement {
     private String attachBase64Code;
     private String formDescription;
     private String loveSign;
+
+//    private Set<User> likes;
+//    private Set<User> likeBy;
 }

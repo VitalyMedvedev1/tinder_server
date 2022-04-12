@@ -1,8 +1,6 @@
 package ru.liga.homework.repository.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.liga.homework.type.Gender;
 import ru.liga.homework.type.LoveSearch;
 
@@ -14,6 +12,8 @@ import java.util.Set;
 @Table(name = "users", schema = "otpmm")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @SequenceGenerator(name = "users_s", schema = "otpmm", sequenceName = "users_s", allocationSize = 1)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
@@ -56,91 +56,4 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "user_id_who")})
     private Set<User> likeBy = new HashSet<>();
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getUsertgid() {
-        return usertgid;
-    }
-
-    public void setUsertgid(Long usertgid) {
-        this.usertgid = usertgid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public LoveSearch getLoveSearch() {
-        return loveSearch;
-    }
-
-    public void setLoveSearch(LoveSearch loveSearch) {
-        this.loveSearch = loveSearch;
-    }
-
-    public String getFormFileName() {
-        return formFileName;
-    }
-
-    public String getFormTitle() {
-        return formTitle;
-    }
-
-    public void setFormTitle(String formTitle) {
-        this.formTitle = formTitle;
-    }
-
-    public String getFormDescription() {
-        return formDescription;
-    }
-
-    public void setFormDescription(String formDescription) {
-        this.formDescription = formDescription;
-    }
-
-    public void setFormFileName(String formFileName) {
-        this.formFileName = formFileName;
-    }
-
-    public Set<User> getLikes() {
-        return likes;
-    }
-
-    public void setLikes(Set<User> likes) {
-        this.likes = likes;
-    }
-
-    public Set<User> getLikeBy() {
-        return likeBy;
-    }
-
-    public void setLikeBy(Set<User> likeBy) {
-        this.likeBy = likeBy;
-    }
 }
