@@ -6,7 +6,4 @@
       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
 
     <include id="1" file="classpath:db/changelog/data/001__DATA_USERS.sql" author="vemedvedev"/>
-<!--    <include id="2" file="classpath:db/changelog/data/002__DATA_USERS_LIKE.sql" author="vemedvedev"/>
-    <include id="3" file="classpath:db/changelog/data/003__DATA_USER_ATTACH.sql" author="vemedvedev"/>-->
-
 </databaseChangeLog>
