@@ -20,17 +20,11 @@ public class UserDto {
     private Long usertgid;
     private String name;
     private String password;
-
-    @Enumerated(EnumType.STRING)
     private Gender gender;
     private String header;
-
-
-    @Enumerated(EnumType.STRING)
     private LookingFor lookingFor;
     private String formFileName;
     private String attachBase64Code;
-
     private String description;
     private String loveSign;
 }

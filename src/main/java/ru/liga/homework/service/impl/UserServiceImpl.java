@@ -10,12 +10,12 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.liga.homework.util.form.UsersForm;
-import ru.liga.homework.db.entity.User;
-import ru.liga.homework.db.repository.UserRepository;
+import ru.liga.homework.repository.entity.User;
+import ru.liga.homework.repository.UserRepository;
 import ru.liga.homework.exception.BusinessLogicException;
 import ru.liga.homework.model.UserDto;
 import ru.liga.homework.service.UserService;
-import ru.liga.homework.type.StaticConstant;
+import ru.liga.homework.constant.Values;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.FileWorker;
 import ru.liga.homework.util.mapper.UserMapper;
@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
                 .filter(user1 -> !usersWhoLikes.contains(user1))
                 .map(user1 -> {
                     UserDto userDto = userMapper.map(user1);
-                    userDto.setLoveSign(StaticConstant.YOU_ARE_LOVE);
+                    userDto.setLoveSign(Values.YOU_ARE_LOVE);
                     return userDto;
                 }).collect(Collectors.toList());
         userDtoList.addAll(
@@ -112,9 +112,9 @@ public class UserServiceImpl implements UserService {
                         .map(user1 -> {
                             UserDto userDto = userMapper.map(user1);
                             if (usersWhoIsLike.contains(user1)) {
-                                userDto.setLoveSign(StaticConstant.MUTUAL_LOVE);
+                                userDto.setLoveSign(Values.MUTUAL_LOVE);
                             } else {
-                                userDto.setLoveSign(StaticConstant.LOVE);
+                                userDto.setLoveSign(Values.LOVE);
                             }
                             return userDto;
                         }).collect(Collectors.toList())
@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
         PageRequest pageable = PageRequest.of(page, size);
         List<String> genders = new ArrayList<>();
         List<String> lookingFor = new ArrayList<>();
-        addSearchCriteria(user, genders, lookingFor);
+//        addSearchCriteria(user, genders, lookingFor);
 
         Page<User> userPage = userRepository.findUsers(user.getId(), genders, lookingFor, pageable);
         if (userPage == null) {
@@ -216,24 +216,24 @@ public class UserServiceImpl implements UserService {
         userDto.setAttachBase64Code(formBase64);
     }
 
-    private void addSearchCriteria(User user, List<String> genders, List<String> lookingFor) {
-        switch (user.getLookingFor()) {
-            case "MALES":
-                genders.add("MALE");
-                break;
-            case "FEMALES":
-                genders.add("FEMALE");
-                break;
-            default:
-                genders.add("MALE");
-                genders.add("FEMALE");
-                break;
-        }
-        if ("MALE".equals(user.getGender())) {
-            lookingFor.add("MALE");
-        } else {
-            lookingFor.add("FEMALE");
-        }
-        lookingFor.add("ALL");
-    }
+//    private void addSearchCriteria(User user, List<String> genders, List<String> lookingFor) {
+//        switch (user.getLookingFor()) {
+//            case "MALES":
+//                genders.add("MALE");
+//                break;
+//            case "FEMALES":
+//                genders.add("FEMALE");
+//                break;
+//            default:
+//                genders.add("MALE");
+//                genders.add("FEMALE");
+//                break;
+//        }
+//        if ("MALE".equals(user.getGender())) {
+//            lookingFor.add("MALE");
+//        } else {
+//            lookingFor.add("FEMALE");
+//        }
+//        lookingFor.add("ALL");
+//    }
 }

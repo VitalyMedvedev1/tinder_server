@@ -1,8 +1,10 @@
-package ru.liga.homework.db.entity;
+package ru.liga.homework.repository.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import liquibase.pro.packaged.L;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import ru.liga.homework.type.Gender;
+import ru.liga.homework.type.LookingFor;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -31,13 +33,15 @@ public class User {
     private String password;
 
     @Column(name = "gender")
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column(name = "header")
     private String header;
 
     @Column(name = "lookingfor")
-    private String lookingFor;
+    @Enumerated(EnumType.STRING)
+    private LookingFor lookingFor;
 
     @Column(name = "description")
     private String description;
@@ -113,12 +117,20 @@ public class User {
         this.password = password;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
+    }
+
+    public LookingFor getLookingFor() {
+        return lookingFor;
+    }
+
+    public void setLookingFor(LookingFor lookingFor) {
+        this.lookingFor = lookingFor;
     }
 
     public String getHeader() {
@@ -129,13 +141,6 @@ public class User {
         this.header = header;
     }
 
-    public String getLookingFor() {
-        return lookingFor;
-    }
-
-    public void setLookingFor(String lookingFor) {
-        this.lookingFor = lookingFor;
-    }
 
     public String getDescription() {
         return description;
