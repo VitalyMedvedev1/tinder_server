@@ -1,10 +1,9 @@
 package ru.liga.homework.repository.entity;
 
-import liquibase.pro.packaged.L;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import ru.liga.homework.type.Gender;
-import ru.liga.homework.type.LookingFor;
+import ru.liga.homework.type.LoveSearch;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -41,7 +40,7 @@ public class User {
 
     @Column(name = "lookingfor")
     @Enumerated(EnumType.STRING)
-    private LookingFor lookingFor;
+    private LoveSearch loveSearch;
 
     @Column(name = "description")
     private String description;
@@ -69,7 +68,7 @@ public class User {
         return id.equals(user.id) && usertgid.equals(user.usertgid) &&
                 name.equals(user.name) && password.equals(user.password) &&
                 gender.equals(user.gender) && Objects.equals(header, user.header) &&
-                lookingFor.equals(user.lookingFor) && Objects.equals(formFileName, user.formFileName);
+                loveSearch.equals(user.loveSearch) && Objects.equals(formFileName, user.formFileName);
     }
 
     @Override
@@ -81,7 +80,7 @@ public class User {
         result = 31 * result + password.hashCode();
         result = 31 * result + gender.hashCode();
         result = 31 * result + header.hashCode();
-        result = 31 * result + lookingFor.hashCode();
+        result = 31 * result + loveSearch.hashCode();
         result = 31 * result + formFileName.hashCode();
         return result;
     }
@@ -125,12 +124,12 @@ public class User {
         this.gender = gender;
     }
 
-    public LookingFor getLookingFor() {
-        return lookingFor;
+    public LoveSearch getLoveSearch() {
+        return loveSearch;
     }
 
-    public void setLookingFor(LookingFor lookingFor) {
-        this.lookingFor = lookingFor;
+    public void setLoveSearch(LoveSearch loveSearch) {
+        this.loveSearch = loveSearch;
     }
 
     public String getHeader() {

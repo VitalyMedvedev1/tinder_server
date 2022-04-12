@@ -8,24 +8,24 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public enum LookingFor {
+public enum LoveSearch {
     MALES("males"),
     FEMALES("females"),
     ALL("all");
 
     private final String code;
 
-    LookingFor(String code) {
+    LoveSearch(String code) {
         this.code = code;
     }
 
     @JsonCreator
-    public static LookingFor decode(final String code) {
-        return Stream.of(LookingFor.values())
+    public static LoveSearch decode(final String code) {
+        return Stream.of(LoveSearch.values())
                 .filter(targetEnum -> targetEnum.code.equals(code))
                 .findFirst()
-                .orElseThrow(() -> new BusinessLogicException("Field lookingfor must be: " + Arrays.stream(LookingFor.values())
-                                                                                                        .map(LookingFor::getCode)
+                .orElseThrow(() -> new BusinessLogicException("Field lookingfor must be: " + Arrays.stream(LoveSearch.values())
+                                                                                                        .map(LoveSearch::getCode)
                                                                                                         .collect(Collectors.toList())));
     }
 
