@@ -11,17 +11,23 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class ConvertTextToPreRevolution {
-
     private static final String REG_EXP_STRING = "[\\s,.:!?]+";
+
     private static final char EP = 0x44A;
     private static final String CONSONANTS_PATTERN = "[бпвфдтзсжшчцщгкхмнлрБПВФДТЗСЖШЧЦЩГКХМНЛР]$";
     private static final char I_DECIMAL = 0x456;
     private static final String I_DECIMAL_PATTERN = "[иИ]+[ауоыэяюёиеАУОЫЭЯЮЁИЕйЙ]";
-    private static final char qp = 'Ф';
     private static final char FITA = 0x472;
     private static final String SPACE = " ";
     private static final int INDX_FIRST = 0;
     private static final int INDX_LAST = 1;
+    private static final Map<String, String> hashMapReplaceFITA = getHashMapFita();
+    private static final Map<String, String> hashMapReplaceIATb = createHashMap();
+
+    static {
+        createHashMap();
+        getHashMapFita();
+    }
 
     public String convert(String text) {
         log.info("Start convert text {} to pre-revolution text", text);
@@ -44,7 +50,7 @@ public class ConvertTextToPreRevolution {
 
     protected String replace_i_decimal(String text) {
         log.debug("Convert text {}, replace 'и' on symbol {}", text, I_DECIMAL);
-        List<String> listText = new ArrayList<>(Arrays.asList(text.split(REG_EXP_STRING)));
+        List<String> listText = Arrays.asList(text.split(REG_EXP_STRING));
         Pattern pattern = Pattern.compile(I_DECIMAL_PATTERN);
 
         return listText.stream()
@@ -57,46 +63,40 @@ public class ConvertTextToPreRevolution {
                 }).collect(Collectors.joining(SPACE));
     }
 
-    private static final Map<String, String> hashMapReplaceFITA = getHashMapFita();
-
 
     protected String replaceFITAinUserName(String text) {
         log.debug("Convert text(name) {}, replace 'qp' on symbol {}", text, FITA);
-        List<String> listText = new ArrayList<>(Arrays.asList(text.split(REG_EXP_STRING)));
-        return listText.stream()
-                .map(
-                        s -> {
-                            for (Map.Entry<String, String> entry : hashMapReplaceFITA.entrySet()
-                            ) {
-                                if (s.contains(entry.getKey())) {
-                                    s = entry.getValue();
-                                }
-                            }
-                            return s;
+        List<String> listText = Arrays.asList(text.split(REG_EXP_STRING));
+        return listText.stream().map(
+                s -> {
+                    for (Map.Entry<String, String> entry : hashMapReplaceFITA.entrySet()
+                    ) {
+                        if (s.contains(entry.getKey())) {
+                            s = entry.getValue();
                         }
-                ).collect(Collectors.joining(SPACE));
+                    }
+                    return s;
+                }
+        ).collect(Collectors.joining(SPACE));
     }
-
-    private static final Map<String, String> hashMapReplaceIATb = createHashMap();
 
 
     protected String replaceIATb(String text) {
-        List<String> listText = new ArrayList<>(Arrays.asList(text.split(REG_EXP_STRING)));
+        List<String> listText = Arrays.asList(text.split(REG_EXP_STRING));
 
-        return listText.stream()
-                .map(
-                        s -> {
-                            for (Map.Entry<String, String> entry : hashMapReplaceIATb.entrySet()
-                            ) {
-                                if (s.contains(entry.getKey())) {
-                                    s = s.substring(INDX_FIRST, s.indexOf(entry.getKey()))
-                                            + entry.getValue() +
-                                            s.substring(s.indexOf(entry.getKey()) + entry.getKey().length());
-                                }
-                            }
-                            return s;
+        return listText.stream().map(
+                s -> {
+                    for (Map.Entry<String, String> entry : hashMapReplaceIATb.entrySet()
+                    ) {
+                        if (s.contains(entry.getKey())) {
+                            s = s.substring(INDX_FIRST, s.indexOf(entry.getKey()))
+                                    + entry.getValue() +
+                                    s.substring(s.indexOf(entry.getKey()) + entry.getKey().length());
                         }
-                ).collect(Collectors.joining(SPACE));
+                    }
+                    return s;
+                }
+        ).collect(Collectors.joining(SPACE));
     }
 
     private static Map<String, String> createHashMap() {
