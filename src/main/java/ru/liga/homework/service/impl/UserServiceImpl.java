@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
         log.info("Update user, UserName: {}", userDto.getUsertgid());
         User user = findUserByTgId(userDto.getUsertgid());
         String fileName = user.getFormFileName();
-        if (!userDto.getHeader().equals(user.getHeader()) || !userDto.getDescription().equals(user.getDescription())) {
+        if (!userDto.getFormTitle().equals(user.getFormTitle()) || !userDto.getFormDescription().equals(user.getFormDescription())) {
             fileWorker.deleteFileFromDisc(fileName);
             try {
                 fileName = createUserForm(userDto);
@@ -199,11 +199,11 @@ public class UserServiceImpl implements UserService {
 
     private String createUserForm(UserDto userDto) {
         log.info("Create form for user with UserName: {} id: {}", userDto.getUsertgid(), userDto.getId());
-        String preRevolutionHeader = convertTextToPreRevolution.convert(userDto.getHeader());
-        String preRevolutionDesc = convertTextToPreRevolution.convert(userDto.getDescription());
+        String preRevolutionFormTitle = convertTextToPreRevolution.convert(userDto.getFormTitle());
+        String preRevolutionFormDesc = convertTextToPreRevolution.convert(userDto.getFormDescription());
         String fileName = usersForm.createUserForm(userDto.getUsertgid(),
-                preRevolutionHeader,
-                preRevolutionDesc);
+                preRevolutionFormTitle,
+                preRevolutionFormDesc);
 
         log.info("Save form on user with formName: {} username: {}", fileName, userDto.getUsertgid());
         return fileName;
