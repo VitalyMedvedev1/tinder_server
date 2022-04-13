@@ -1,6 +1,6 @@
-package ru.liga.homework.type;
+package ru.liga.homework.constant;
 
-public final class StaticConstant {
+public final class Values {
     public static String YOU_ARE_LOVE = "Вы любимы";
     public static String LOVE = "Люмим";
     public static String MUTUAL_LOVE = "Взваимость";

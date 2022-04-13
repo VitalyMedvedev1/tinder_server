@@ -1,12 +1,11 @@
-package ru.liga.homework.service;
+package ru.liga.homework.util.form;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.liga.homework.api.UsersFormService;
-import ru.liga.homework.exception.BusinessLogicException;
+import ru.liga.homework.exception.CustomIOFileException;
 import ru.liga.homework.util.FileWorker;
 
 import javax.imageio.ImageIO;
@@ -31,7 +30,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class DefaultUsersFormService implements UsersFormService {
+public class UsersFormGenerator implements UsersForm {
 
     private final FileWorker fileWorker;
     private static final String BACKGROUND_FILE_NAME = "background.jpg";
@@ -43,50 +42,49 @@ public class DefaultUsersFormService implements UsersFormService {
     @Override
     public String createUserForm(Long userTgId, String header, String description) {
         log.debug("Start create form for userName {}", userTgId);
+        BufferedImage image;
         try (InputStream inputStream = new ClassPathResource(BACKGROUND_FILE_NAME).getInputStream()) {
-            BufferedImage image = ImageIO.read(inputStream);
-            header = header + ",";
-            Rectangle rectangle = new Rectangle(image.getWidth(), image.getHeight());
-            List<TextLayout> testLines = new ArrayList<>();
-            List<TextLayout> headerLines = new ArrayList<>();
-            int fontSize = FONT_SIZE;
-            float headerHeight;
-            float descHeight;
-            Graphics2D g2 = (Graphics2D) image.getGraphics();
-            g2.setColor(Color.BLACK);
-            do {
-                testLines.clear();
-                headerLines.clear();
-
-                Font headerFont = new Font(FONT_NAME, Font.BOLD, fontSize + FONT_HEADER_SIZE);
-                Font descFont = new Font(FONT_NAME, Font.PLAIN, fontSize);
-
-                headerHeight = calcTextHeightAndTextLine(header, headerLines, headerFont, g2, rectangle);
-                if (description.equals("")) {
-                    descHeight = 0;
-                } else {
-                    descHeight = calcTextHeightAndTextLine(description, testLines, descFont, g2, rectangle);
-                }
-                fontSize -= 2;
-            }
-            while (descHeight > rectangle.getHeight() - headerHeight);
-
-            float y = (rectangle.height - headerHeight - descHeight) / 2;
-
-            testLines.addAll(0, headerLines);
-
-            for (TextLayout line : testLines
-            ) {
-                line.draw(g2, (float) LEFT_INDENT, y + line.getAscent());
-                y += line.getAscent() + line.getDescent() + line.getLeading();
-            }
-            String fileName = fileWorker.saveUserFormOnDiscAndReturnPath(image, userTgId);
-            image.flush();
-            return fileName;
+            image = ImageIO.read(inputStream);
         } catch (IOException e) {
-            log.error("Error when create form for userName {} \n {}", userTgId, e.getMessage());
-            throw new BusinessLogicException("Error when create form for userName " + userTgId + "\n" + e.getMessage());
+            throw new CustomIOFileException("Error when create form for userName " + userTgId + "\n" + e.getMessage());
         }
+        header = header + ",";
+        Rectangle rectangle = new Rectangle(image.getWidth(), image.getHeight());
+        List<TextLayout> testLines = new ArrayList<>();
+        List<TextLayout> headerLines = new ArrayList<>();
+        int fontSize = FONT_SIZE;
+        float headerHeight;
+        float descHeight;
+        Graphics2D g2 = (Graphics2D) image.getGraphics();
+        g2.setColor(Color.BLACK);
+        do {
+            testLines.clear();
+            headerLines.clear();
+
+            Font headerFont = new Font(FONT_NAME, Font.BOLD, fontSize + FONT_HEADER_SIZE);
+            Font descFont = new Font(FONT_NAME, Font.PLAIN, fontSize);
+
+            headerHeight = calcTextHeightAndTextLine(header, headerLines, headerFont, g2, rectangle);
+            if (description.equals("")) {
+                descHeight = 0;
+            } else {
+                descHeight = calcTextHeightAndTextLine(description, testLines, descFont, g2, rectangle);
+            }
+            fontSize -= 2;
+        }
+        while (descHeight > rectangle.getHeight() - headerHeight);
+
+        float y = (rectangle.height - headerHeight - descHeight) / 2;
+
+        testLines.addAll(0, headerLines);
+
+        for (TextLayout line : testLines) {
+            line.draw(g2, (float) LEFT_INDENT, y + line.getAscent());
+            y += line.getAscent() + line.getDescent() + line.getLeading();
+        }
+        String fileName = fileWorker.saveUserFormOnDiscAndReturnPath(image, userTgId);
+        image.flush();
+        return fileName;
     }
 
     private float calcTextHeightAndTextLine(String text, List<TextLayout> textLines, Font font, Graphics2D graphics2D, Rectangle rectangle) {

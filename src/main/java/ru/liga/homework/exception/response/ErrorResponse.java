@@ -1,4 +1,4 @@
-package ru.liga.homework.web.response;
+package ru.liga.homework.exception.response;
 
 import lombok.Getter;
 import lombok.Setter;
