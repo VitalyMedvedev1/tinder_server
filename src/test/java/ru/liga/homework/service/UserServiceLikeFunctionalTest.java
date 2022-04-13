@@ -4,26 +4,25 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
-import ru.liga.homework.repository.entity.User;
+import ru.liga.homework.model.mapper.UserMapper;
 import ru.liga.homework.repository.UserRepository;
+import ru.liga.homework.repository.entity.User;
 import ru.liga.homework.service.impl.UserServiceImpl;
 import ru.liga.homework.type.Gender;
 import ru.liga.homework.type.LoveSearch;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
-import ru.liga.homework.util.form.UsersFormGenerator;
 import ru.liga.homework.util.FileWorker;
-import ru.liga.homework.model.mapper.UserModelMapper;
+import ru.liga.homework.util.form.UsersFormGenerator;
 
 import java.util.HashSet;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceLikeFunctionalTest {
 
     private UserRepository userRepository = Mockito.mock(UserRepository.class);
-    public final UserService userService = new UserServiceImpl(userRepository, new ModelMapper(), new UserModelMapper(new ModelMapper()), new UsersFormGenerator(new FileWorker()), new ConvertTextToPreRevolution(), new FileWorker(), null);
+    public final UserService userService = new UserServiceImpl(userRepository, new UsersFormGenerator(new FileWorker()), new ConvertTextToPreRevolution(), new FileWorker(), UserMapper.USER_MAPPER);
 
     @Test
     void like() {
@@ -35,7 +34,7 @@ class UserServiceLikeFunctionalTest {
         assertEquals(0, user0.getLikes().size());
         assertEquals(0, user0.getLikeBy().size());
 
-        userService.like(111L,222L);
+        userService.like(111L, 222L);
 
         assertEquals(1, user0.getLikes().size());
     }

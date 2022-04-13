@@ -4,20 +4,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
-import static org.junit.jupiter.api.Assertions.*;
-
-import ru.liga.homework.repository.entity.User;
+import ru.liga.homework.constant.Values;
+import ru.liga.homework.model.UserDto;
+import ru.liga.homework.model.mapper.UserMapper;
 import ru.liga.homework.repository.UserRepository;
+import ru.liga.homework.repository.entity.User;
 import ru.liga.homework.service.impl.UserServiceImpl;
 import ru.liga.homework.type.Gender;
 import ru.liga.homework.type.LoveSearch;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
-import ru.liga.homework.util.form.UsersFormGenerator;
 import ru.liga.homework.util.FileWorker;
-import ru.liga.homework.model.mapper.UserModelMapper;
-import ru.liga.homework.model.UserDto;
-import ru.liga.homework.constant.Values;
+import ru.liga.homework.util.form.UsersFormGenerator;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,11 +22,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @ExtendWith(MockitoExtension.class)
 class UserServiceFindFavoritesTest {
 
     public final UserRepository userRepository = Mockito.mock(UserRepository.class);
-    public final UserService userService = new UserServiceImpl(userRepository, new ModelMapper(), new UserModelMapper(new ModelMapper()), new UsersFormGenerator(new FileWorker()), new ConvertTextToPreRevolution(), new FileWorker(), null);
+    public final UserService userService = new UserServiceImpl(userRepository, new UsersFormGenerator(new FileWorker()), new ConvertTextToPreRevolution(), new FileWorker(), UserMapper.USER_MAPPER);
 
     @Test
     public void findFavorites() {
@@ -44,7 +43,7 @@ class UserServiceFindFavoritesTest {
                 )));
         user.getLikeBy().addAll(new HashSet<>
                 (Arrays.asList(
-                        new User(1L, 1L, "1", "1", Gender.FEMALE, "1",  LoveSearch.ALL, "1", "1", new HashSet<>(), new HashSet<>()),
+                        new User(1L, 1L, "1", "1", Gender.FEMALE, "1", LoveSearch.ALL, "1", "1", new HashSet<>(), new HashSet<>()),
                         new User(7L, 7L, "7", "7", Gender.FEMALE, "7", LoveSearch.ALL, "", "7", new HashSet<>(), new HashSet<>()),
                         new User(3L, 3L, "3", "3", Gender.FEMALE, "3", LoveSearch.ALL, "", "3", new HashSet<>(), new HashSet<>()),
                         new User(4L, 4L, "4", "4", Gender.FEMALE, "4", LoveSearch.ALL, "", "4", new HashSet<>(), new HashSet<>()),
@@ -59,6 +58,7 @@ class UserServiceFindFavoritesTest {
         assertEquals(Values.MUTUAL_LOVE, listUsers.stream().filter(userView -> userView.getId() == 1).map(UserDto::getLoveSign).collect(Collectors.joining()));
         assertEquals(Values.LOVE, listUsers.stream().filter(userView -> userView.getId() == 5).map(UserDto::getLoveSign).collect(Collectors.joining()));
     }
+
     @Test
     public void findFavorites_LOVE() {
         User user = new User(0L, 0L, "1", "1", Gender.FEMALE, "1", LoveSearch.ALL, "1", "1", new HashSet<>(), new HashSet<>());

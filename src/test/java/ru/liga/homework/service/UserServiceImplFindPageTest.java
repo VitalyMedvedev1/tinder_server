@@ -4,20 +4,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import ru.liga.homework.repository.entity.User;
-import ru.liga.homework.repository.UserRepository;
 import ru.liga.homework.model.UserDto;
+import ru.liga.homework.model.mapper.UserMapper;
+import ru.liga.homework.repository.UserRepository;
+import ru.liga.homework.repository.entity.User;
 import ru.liga.homework.service.impl.UserServiceImpl;
 import ru.liga.homework.type.Gender;
 import ru.liga.homework.type.LoveSearch;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
-import ru.liga.homework.util.form.UsersFormGenerator;
 import ru.liga.homework.util.FileWorker;
-import ru.liga.homework.model.mapper.UserModelMapper;
+import ru.liga.homework.util.form.UsersFormGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +30,7 @@ class UserServiceImplFindPageTest {
 
     public final UserRepository userRepository = Mockito.mock(UserRepository.class);
     public final FileWorker fileWorker = Mockito.mock(FileWorker.class);
-    public final UserService userService = new UserServiceImpl(userRepository, new ModelMapper(), new UserModelMapper(new ModelMapper()), new UsersFormGenerator(fileWorker), new ConvertTextToPreRevolution(), fileWorker, null);
+    public final UserService userService = new UserServiceImpl(userRepository, new UsersFormGenerator(fileWorker), new ConvertTextToPreRevolution(), fileWorker, UserMapper.USER_MAPPER);
 
     @Test
     void findUsersWithPageable() {

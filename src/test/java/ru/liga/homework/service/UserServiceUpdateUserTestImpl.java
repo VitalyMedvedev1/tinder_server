@@ -5,16 +5,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import ru.liga.homework.util.form.UsersForm;
-import ru.liga.homework.repository.entity.User;
-import ru.liga.homework.repository.UserRepository;
 import ru.liga.homework.model.UserDto;
+import ru.liga.homework.model.mapper.UserMapper;
+import ru.liga.homework.repository.UserRepository;
+import ru.liga.homework.repository.entity.User;
 import ru.liga.homework.service.impl.UserServiceImpl;
 import ru.liga.homework.type.Gender;
 import ru.liga.homework.type.LoveSearch;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.FileWorker;
-import ru.liga.homework.model.mapper.UserModelMapper;
+import ru.liga.homework.util.form.UsersForm;
 
 import java.util.HashSet;
 
@@ -25,7 +25,7 @@ class UserServiceUpdateUserTestImpl {
     private final FileWorker fileWorker = Mockito.mock(FileWorker.class);
     private final UsersForm usersForm = Mockito.mock(UsersForm.class);
     private ModelMapper modelMapper = new ModelMapper();
-    private final UserService userService = new UserServiceImpl(userRepository, modelMapper, new UserModelMapper(new ModelMapper()), usersForm, new ConvertTextToPreRevolution(), fileWorker, null);
+    private final UserService userService = new UserServiceImpl(userRepository, usersForm, new ConvertTextToPreRevolution(), fileWorker, UserMapper.USER_MAPPER);
     private static final String CREATE_CLIENT_LOGIN_TEST = "CREATE_CLIENT_LOGIN_TEST";
     private static final String CREATE_CLIENT_PASSWORD_TEST = "CREATE_CLIENT_PASSWORD_TEST";
     private static final Long ID_FUTURE_VERSION = 10103L;
@@ -34,7 +34,7 @@ class UserServiceUpdateUserTestImpl {
 
     @Test
     void updateWith_NOT_CreatedNewForm() {
-        UserDto userDto = new UserDto(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LoveSearch.ALL, "TEST_FILE_999.txt", "1", "DESCRIPTION","");
+        UserDto userDto = new UserDto(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LoveSearch.ALL, "TEST_FILE_999.txt", "1", "DESCRIPTION", "", new HashSet<>(), new HashSet<>());
         User user = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.FEMALE, "HEADER1", LoveSearch.ALL, "DESCRIPTION", "1", new HashSet<>(), new HashSet<>());
         Mockito.when(userRepository.findByUsertgid(ID_FUTURE_VERSION)).thenReturn(java.util.Optional.of(user));
         User user1 = modelMapper.map(userDto, User.class);
@@ -46,7 +46,7 @@ class UserServiceUpdateUserTestImpl {
 
     @Test
     void updateWithCreatedNewForm() {
-        UserDto userDto = new UserDto(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LoveSearch.ALL, "TEST_FILE_999.txt", "1", "DESCRIPTION","");
+        UserDto userDto = new UserDto(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.MALE, "1", LoveSearch.ALL, "TEST_FILE_999.txt", "1", "DESCRIPTION", "", new HashSet<>(), new HashSet<>());
         User user = new User(ID_FUTURE_VERSION, ID_FUTURE_VERSION, CREATE_CLIENT_LOGIN_TEST, CREATE_CLIENT_PASSWORD_TEST, Gender.FEMALE, "LoveSearch.ALL", LoveSearch.ALL, "DESCRIPTION", "1", new HashSet<>(), new HashSet<>());
         Mockito.when(userRepository.findByUsertgid(ID_FUTURE_VERSION)).thenReturn(java.util.Optional.of(user));
         User user1 = modelMapper.map(userDto, User.class);

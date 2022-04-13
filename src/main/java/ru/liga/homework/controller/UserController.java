@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.liga.homework.service.UserService;
 import ru.liga.homework.model.UserDto;
+import ru.liga.homework.service.UserService;
 
 import java.util.List;
 

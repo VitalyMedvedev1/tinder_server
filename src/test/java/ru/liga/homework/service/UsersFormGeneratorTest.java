@@ -9,15 +9,13 @@ import ru.liga.homework.util.form.UsersForm;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class UsersFormGeneratorTest {
-    
+
     private static final Long USER_TG_ID = 99999L;
 
     @Autowired
@@ -31,7 +29,7 @@ class UsersFormGeneratorTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         File file = new File(Values.USER_DIR + Values.FILE_DIR + pathForm);
         boolean delete = file.delete();
 

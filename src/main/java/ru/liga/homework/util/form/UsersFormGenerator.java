@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.liga.homework.exception.BusinessLogicException;
 import ru.liga.homework.exception.CustomIOFileException;
 import ru.liga.homework.util.FileWorker;
 

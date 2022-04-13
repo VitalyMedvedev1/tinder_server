@@ -3,7 +3,6 @@ package ru.liga.homework.util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
-import ru.liga.homework.exception.BusinessLogicException;
 import ru.liga.homework.constant.Values;
 import ru.liga.homework.exception.CustomIOFileException;
 

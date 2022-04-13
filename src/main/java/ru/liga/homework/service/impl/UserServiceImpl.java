@@ -3,7 +3,6 @@ package ru.liga.homework.service.impl;
 import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -21,7 +20,6 @@ import ru.liga.homework.type.LoveSearch;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.FileWorker;
 import ru.liga.homework.util.form.UsersForm;
-import ru.liga.homework.model.mapper.UserModelMapper;
 
 import javax.persistence.EntityNotFoundException;
 import java.text.MessageFormat;
@@ -37,8 +35,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
-    private final UserModelMapper userModelMapper;
     private final UsersForm usersForm;
     private final ConvertTextToPreRevolution convertTextToPreRevolution;
     private final FileWorker fileWorker;
@@ -47,6 +43,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findByTgId(Long userTgId) {
         log.info("Find user with Telegram Id: {}", userTgId);
+
+        User user = findUserByTgId(userTgId);
+        UserDto userDto1 = userMapper.userToUserDto(user);
 
         UserDto userDto = userMapper.userToUserDto(findUserByTgId(userTgId));
         String fileName = userDto.getFormFileName();
@@ -66,13 +65,13 @@ public class UserServiceImpl implements UserService {
         }
 
         log.info("Save user with Telegram Id: {}", userDto.getUsertgid());
-        User user = userRepository.save(modelMapper.map(userDto, User.class));
+        User user = userRepository.save(userMapper.fromUserDto(userDto));
         String fileName;
         try {
             fileName = createUserForm(userDto);
             userDto.setFormFileName(fileName);
             userDto.setId(user.getId());
-            userRepository.save(modelMapper.map(userDto, User.class));
+            userRepository.save(userMapper.fromUserDto(userDto));
         } catch (Exception e) {
             log.error("Error wen create user form with Telegram Id {} \n Error message: {}", userDto.getUsertgid(), e.getMessage());
             if ((fileName = userDto.getFormFileName()) != null) {
@@ -107,14 +106,14 @@ public class UserServiceImpl implements UserService {
         List<UserDto> userDtoList = usersWhoIsLike.stream()
                 .filter(user1 -> !usersWhoLikes.contains(user1))
                 .map(user1 -> {
-                    UserDto userDto = userModelMapper.map(user1);
+                    UserDto userDto = userMapper.userToUserDto(user1);
                     userDto.setLoveSign(Values.YOU_ARE_LOVE);
                     return userDto;
                 }).collect(Collectors.toList());
         userDtoList.addAll(
                 usersWhoLikes.stream()
                         .map(user1 -> {
-                            UserDto userDto = userModelMapper.map(user1);
+                            UserDto userDto = userMapper.userToUserDto(user1);
                             if (usersWhoIsLike.contains(user1)) {
                                 userDto.setLoveSign(Values.MUTUAL_LOVE);
                             } else {
@@ -141,7 +140,7 @@ public class UserServiceImpl implements UserService {
 
         List<UserDto> listUserDto = userPage.getContent()
                 .stream()
-                .map(user1 -> modelMapper.map(user1, UserDto.class)).peek(userView1 -> {
+                .map(userMapper::userToUserDto).peek(userView1 -> {
                     String fileName = userView1.getFormFileName();
                     if (fileName == null) {
                         createBase64CodeFromUserForm(userView1, createFormAndSave(userView1));
@@ -174,7 +173,7 @@ public class UserServiceImpl implements UserService {
         }
         userDto.setId(user.getId());
         userDto.setFormFileName(fileName);
-        User userNewData = modelMapper.map(userDto, User.class);
+        User userNewData = userMapper.fromUserDto(userDto);
         userNewData.getLikes().addAll(user.getLikes());
         userNewData.getLikeBy().addAll(user.getLikeBy());
         userRepository.save(userNewData);
@@ -194,7 +193,7 @@ public class UserServiceImpl implements UserService {
         log.info("Create user form when find user but not find his form, username: {}", userDto.getUsertgid());
         fileName = createUserForm(userDto);
         userDto.setFormFileName(fileName);
-        userRepository.save(modelMapper.map(userDto, User.class));
+        userRepository.save(userMapper.fromUserDto(userDto));
         return fileName;
     }
 

@@ -27,6 +27,6 @@ public class UserDto {
     private String formDescription;
     private String loveSign;
 
-//    private Set<User> likes;
-//    private Set<User> likeBy;
+    private Set<User> likes;
+    private Set<User> likeBy;
 }

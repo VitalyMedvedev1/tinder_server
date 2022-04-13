@@ -5,16 +5,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import ru.liga.homework.model.UserDto;
+import ru.liga.homework.model.mapper.UserMapper;
+import ru.liga.homework.repository.UserRepository;
+import ru.liga.homework.repository.entity.User;
+import ru.liga.homework.service.impl.UserServiceImpl;
 import ru.liga.homework.type.Gender;
 import ru.liga.homework.type.LoveSearch;
-import ru.liga.homework.util.form.UsersForm;
-import ru.liga.homework.repository.entity.User;
-import ru.liga.homework.repository.UserRepository;
-import ru.liga.homework.model.UserDto;
-import ru.liga.homework.service.impl.UserServiceImpl;
 import ru.liga.homework.util.ConvertTextToPreRevolution;
 import ru.liga.homework.util.FileWorker;
-import ru.liga.homework.model.mapper.UserModelMapper;
+import ru.liga.homework.util.form.UsersForm;
 
 import java.util.HashSet;
 
@@ -27,7 +27,7 @@ class UserServiceFindFunctionTest {
     private final UsersForm usersForm = Mockito.mock(UsersForm.class);
     private final FileWorker fileWorker = Mockito.mock(FileWorker.class);
     private ModelMapper modelMapper = new ModelMapper();
-    private final UserService userService = new UserServiceImpl(userRepository, modelMapper, new UserModelMapper(new ModelMapper()), usersForm, new ConvertTextToPreRevolution(), fileWorker, null);
+    private final UserService userService = new UserServiceImpl(userRepository, usersForm, new ConvertTextToPreRevolution(), fileWorker, UserMapper.USER_MAPPER);
     private static final String CREATE_CLIENT_LOGIN_TEST = "CREATE_CLIENT_LOGIN_TEST";
     private static final String CREATE_CLIENT_PASSWORD_TEST = "CREATE_CLIENT_PASSWORD_TEST";
     private static final Long ID_FUTURE_VERSION = 10103L;
